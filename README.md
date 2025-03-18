@@ -55,7 +55,7 @@ If you use the Russian language for spell checking, add the files **ru_RU.aff** 
 1. **Clone the repository**:  
 
 ```bash
-git clone https://github.com/yourusername/LM-Studio-Voice-Dialogue.git
+git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git
 cd LM-Studio-Voice-Dialogue
 ```
 
@@ -66,7 +66,7 @@ pip install -r requirements.txt
 ```
 
 3. **Set up FFmpeg**:  
-   - Make sure **FFmpeg** is installed.  
+   - Make sure (Windows EXE Files) **FFmpeg** is installed.  
    - For Windows, download it [here](https://ffmpeg.org/download.html) and add it to PATH.
 
 4. **Add spell check files (if using Russian)**:  
