@@ -87,7 +87,7 @@ The code is open for anyone who wants to improve or use it in their own projects
 
 If you liked the project and want to support my experiments, you can send a small donation:  
 
-**Bitcoin:** `bc1qxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+**Bitcoin:** `bc1q0jzxrafdq5wn4yerfx5w5sckupepwn9ts2dxwp`
 
 📜 **License**
 
