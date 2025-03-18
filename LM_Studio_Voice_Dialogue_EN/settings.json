@@ -1,0 +1,27 @@
+{
+  "text_size": 14,
+  "tts_model": "tts_models/multilingual/multi-dataset/xtts_v2",
+  "whisper_model": "large-v3-turbo",
+  "summary_interval": 8,
+  "colors": {
+    "text_input_bg": "#0d1318",
+    "text_input_text": "#cbcbcb",
+    "chat_bg": "#0d1318",
+    "chat_text": "#59bccb",
+    "system_log_bg": "#0d1318",
+    "system_log_text": "#00577c",
+    "button_bg": "#0d1318",
+    "button_text": "#cbcbcb",
+    "button_hover_color": "#1c262d",
+    "panel_bg": "#161e24",
+    "window_bg": "#0d1318",
+    "system_label_color": "#cbcbcb",
+    "system_content_color": "#0083af",
+    "user_label_color": "#ffffff",
+    "user_content_color": "#b4cba3",
+    "assistant_label_color": "#ffffff",
+    "assistant_content_color": "#ff17c1",
+    "scrollbar_handle_color": "#222d36",
+    "scrollbar_track_color": "#161e24"
+  }
+}
