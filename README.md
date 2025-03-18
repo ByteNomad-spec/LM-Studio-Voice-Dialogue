@@ -91,4 +91,16 @@ If you liked the project and want to support my experiments, you can send a smal
 
 📜 **License**
 
-The project is distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
+## Licenses
+
+This project uses the following libraries and models:
+
+- **Whisper (ASR)** — licensed under the [MIT License](https://opensource.org/licenses/MIT).
+- **Coqui TTS (TTS)** — licensed under the [Coqui Public Model License 1.0.0](https://github.com/coqui-ai/TTS/blob/main/LICENSE).
+- **PyTorch** — licensed under the [BSD License](https://opensource.org/licenses/BSD-3-Clause).
+- **torchvision** — licensed under the [BSD License](https://opensource.org/licenses/BSD-3-Clause).
+- **torchaudio** — licensed under the [BSD License](https://opensource.org/licenses/BSD-3-Clause).
+- **FFmpeg** — licensed under [LGPLv2.1](https://www.ffmpeg.org/legal.html) or [GPLv3](https://www.ffmpeg.org/legal.html), depending on the build.
+- **pyenchant** — licensed under the [LGPL License](https://opensource.org/licenses/LGPL-3.0).
+
+Please ensure you comply with the terms of these licenses before using the project.
