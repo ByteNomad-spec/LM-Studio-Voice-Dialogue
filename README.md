@@ -50,7 +50,7 @@ If you use the Russian language for spell checking, add the files **ru_RU.aff** 
 1. **Clone the repository**:  
 
 ```bash
-git clone https://github.com/yourusername/LM-Studio-Voice-Dialogue.git
+git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git
 cd LM-Studio-Voice-Dialogue
 ```
 
