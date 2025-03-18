@@ -61,7 +61,7 @@ pip install -r requirements.txt
 ```
 
 3. **Set up FFmpeg**:  
-   - Make sure **FFmpeg** is installed.  
+   - Make sure (Windows EXE Files) **FFmpeg** is installed.  
    - For Windows, download it [here](https://ffmpeg.org/download.html) and add it to PATH.
 
 4. **Add spell check files (if using Russian)**:  
