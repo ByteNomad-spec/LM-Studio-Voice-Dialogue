@@ -5,9 +5,9 @@ The application works using **Whisper** and **Coqui TTS** models to enhance text
 
 🚀 **Main Components**
 
-🔧 **Loading and Saving Settings/History**  
-- **`load_settings` and `save_settings` functions** load and save settings in JSON files.  
-- The dialogue history and message counter are stored separately to maintain context between launches.
+🔧 **Loading and saving settings/history** 
+- The **`load_settings` and `save_settings`** functions load and save settings in JSON files. 
+- The conversation history and message counter (Needed for the "long-term memory" mechanism) are stored separately to maintain context between launches.
 
 📝 **Spell Checking**  
 - **SpellCheckHighlighter** and **SpellCheckTextEdit** work with **pyenchant** to highlight text errors.  
