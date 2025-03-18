@@ -3,7 +3,7 @@
 ## Screenshot  
 Here is a preview of the LM Studio Voice Dialogue interface:  
 
-![LM Studio Voice Dialogue] screenshot.png
+![LM Studio Voice Dialogue](media/screenshot.png)
 
 LM-Studio-Voice-Dialogue is an application for voice dialogue with artificial intelligence via a local Lm studio server. It includes speech synthesis (TTS), speech recognition (ASR) functions, and support for multitasking communication.  
 The application works using **Whisper** and **Coqui TTS** models to enhance text and audio processing.
