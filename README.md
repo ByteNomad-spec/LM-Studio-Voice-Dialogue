@@ -4,7 +4,7 @@
 
 ## Overview
 
-LM-Studio-Voice-Dialogue is an application that enables voice dialogue with artificial intelligence through a local LM Studio server. Speech recognition (ASR), it integrates speech synthesis (TTS). The system utilizes **Whisper** for speech-to-text transcription, **Coqui TTS** for high-quality speech synthesis, and a local OpenAI ChatCompletion API to generate responses.
+LM-Studio-Voice-Dialogue is an application that enables voice interaction with artificial intelligence through a local LM Studio server. It incorporates speech recognition (ASR) and speech synthesis (TTS). The system uses Whisper for speech-to-text transcription, Coqui TTS for high-quality text-to-speech synthesis, and a local OpenAI ChatCompletion API to generate responses.
 
 ---
 
