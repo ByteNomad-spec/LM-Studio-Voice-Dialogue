@@ -11,7 +11,7 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 ## 🚀 Main Components
 
 ### 🔧 Settings and History Management
-- The `load_settings` and `save_settings` functions are responsible for managing configurations stored in JSON files.  
+- The `load_settings` and `save_settings` functions are responsible for managing configurations stored in `settings.json`.  
 - The system stores the conversation history in `conversation_history.json` and maintains a separate `message_counter.json` to preserve context between sessions and support a long-term memory mechanism.
 
 ### 📝 Spell Checking
