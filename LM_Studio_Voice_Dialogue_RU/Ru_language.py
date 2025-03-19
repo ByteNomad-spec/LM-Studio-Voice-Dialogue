@@ -147,6 +147,8 @@ class AssistantMessageWorker(QObject):
         self.backend = backend
 
     def run(self) -> None:
+        self.text = re.sub(r"(?<=\d)\.(?=\d)", ",", self.text)
+
         # Разбиваем текст на предложения по знакам препинания
         parts = re.split(r'(?<=[.!?])\s+', self.text)
         for i, part in enumerate(parts):

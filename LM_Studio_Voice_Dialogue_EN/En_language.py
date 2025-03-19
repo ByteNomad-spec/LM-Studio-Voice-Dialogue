@@ -147,6 +147,8 @@ class AssistantMessageWorker(QObject):
         self.backend = backend
 
     def run(self) -> None:
+        self.text = re.sub(r"(?<=\d)\.(?=\d)", ",", self.text)
+
         # Split text into sentences using punctuation
         parts = re.split(r'(?<=[.!?])\s+', self.text)
         for i, part in enumerate(parts):
