@@ -1,107 +1,138 @@
 🗣️ **LM-Studio-Voice-Dialogue**
 
-## Screenshot  
-Here is a preview of the LM Studio Voice Dialogue interface:  
-
 ![LM Studio Voice Dialogue](media/screenshot.png)
 
-LM-Studio-Voice-Dialogue is an application for voice dialogue with artificial intelligence via a local LM Studio server. It includes speech synthesis (TTS), speech recognition (ASR), and support for multitasking communication. The application uses **Whisper** for speech-to-text transcription and **Coqui TTS** for high-quality speech synthesis, combined with a local OpenAI ChatCompletion API for generating responses.
+## Overview
 
-🚀 **Main Components**
+LM-Studio-Voice-Dialogue is an application that enables voice interaction with artificial intelligence through a local LM Studio server. It incorporates speech recognition (ASR) and speech synthesis (TTS). The system uses Whisper for speech-to-text transcription, Coqui TTS for high-quality text-to-speech synthesis, and a local OpenAI ChatCompletion API to generate responses.
 
-🔧 **Loading and Saving Settings & History**  
-- The **`load_settings`** and **`save_settings`** functions manage configuration in JSON files.  
-- Conversation history and a separate message counter are stored to maintain context between launches and to support the long-term memory mechanism.
+---
 
-📝 **Spell Checking**  
-- **SpellCheckHighlighter** and **SpellCheckTextEdit** integrate with **pyenchant** to highlight spelling errors in real time.  
-- Incorrect words are underlined and can be corrected via a context menu (click on the word).
+## 🚀 Main Components
 
-🎙️ **Asynchronous Speech Synthesis (TTS)**  
-- **AssistantMessageWorker** splits the assistant’s reply into smaller parts, synthesizes the corresponding speech using the Coqui TTS model, and plays it sequentially.  
-- The worker emits text updates gradually into the chat area, ensuring the UI remains responsive during speech playback.
+### 🔧 Settings and History Management
+- The `load_settings` and `save_settings` functions are responsible for managing configurations stored in `settings.json`.  
+- The system stores the conversation history in `conversation_history.json` and maintains a separate `message_counter.json` to preserve context between sessions and support a long-term memory mechanism.
 
-### 🧠 **AI Assistant Logic**  
+### 📝 Spell Checking
+- **SpellCheckHighlighter** and **SpellCheckTextEdit** integrate with **pyenchant** to highlight spelling errors in real time.
+- Misspelled words are underlined and can be corrected via a context menu when clicked.
+
+### 🎙️ Synchronous Display of Speech and Text (TTS)
+- **AssistantMessageWorker** divides the assistant’s response into sentences and synthesizes audio for each sentence using the Coqui TTS model.
+- During audio playback, the corresponding text is gradually displayed with a delay proportional to the audio duration.
+- This approach ensures long responses are vocalized without delay while synchronizing text display with speech playback.
+
+### 🧠 AI Assistant Logic
 - **Audio Input & Output:**  
-  - Audio is recorded using **PyAudio** and played back via **pygame.mixer**.  
-  - Whisper is used to transcribe recorded audio into text.  
+  - Audio is recorded using **PyAudio** and played back using **pygame.mixer**.  
+  - **Whisper** is employed to transcribe recorded audio into text.
 - **Response Generation:**  
-  - User messages (typed or transcribed) are sent to a local OpenAI ChatCompletion API (configured at `http://localhost:1234/v1`) using the model `"local-model"`.  
+  - User messages (typed or transcribed) are sent to a local OpenAI ChatCompletion API (configured at `http://localhost:1234/v1`) using the model `"local-model"`.
   - The conversation history is updated with both user and assistant messages.
 - **Long-Term Memory:**  
-  - A message counter tracks the number of exchanges, and after reaching a configurable threshold (`summary_interval`), the **generate_summary** method is called.  
-  - This method generates a concise, structured summary of key information about the user and conversation, which is appended to the conversation history, ensuring that important details are preserved within the AI’s context.
+  - A message counter tracks the number of exchanges, and upon reaching a configurable threshold (`summary_interval`), the **generate_summary** method is called.
+  - This method produces a concise, structured summary of key information about the user and the conversation, ensuring essential details remain within the AI’s context window.
 
-🖥️ **Graphical Interface (GUI) with PyQt6**  
-- The application features a modern, user-friendly interface built with **PyQt6**, divided into three main panels:  
-  - **Input Panel:** Contains the text input field (with live spell checking) and a “Send” button.  
-  - **Chat Panel:** Displays the conversation history with color-coded labels for User, Assistant, and System messages.  
-  - **Button Panel:** Provides controls for recording audio, stopping or canceling recordings, updating the voice sample, stopping speech synthesis, and accessing settings.
+### 🖥️ Graphical User Interface (GUI) with PyQt6
+- The application features a modern, user-friendly interface built with **PyQt6**, divided into three main panels:
+  - **Input Panel:** Contains a text input field (with live spell checking) and a “Send” button.
+  - **Chat Panel:** Displays the conversation history with color-coded labels for User, Assistant, and System messages.
+  - **Control Panel:** Provides controls for recording audio, stopping or canceling recordings, updating the voice sample, halting speech synthesis, and accessing settings.
 - **Settings Window:**  
-  - Allows customization of parameters such as text size, TTS model, Whisper model, summary interval, and color themes.  
-  - All changes are saved to a JSON file, and some changes (like font size) take effect immediately while others require a restart.
+  - Allows customization of parameters such as text size, TTS model, Whisper model, summary interval, and color themes.
+  - Changes are saved to a JSON file; some (e.g., font size) take effect immediately, while others require a restart.
 
-🏗️ **Long-Term Memory Logic**  
-- The entire process happens cyclically and hidden, without interrupting the dialogue. After a certain number of messages (`summary_interval`), which can be adjusted in settings (e.g., for 8192 tokens, I recommend 7), **generate_summary** is called, passing instructions to the AI to create a concise, structured summary of all key information. There may be some problems at first, you need to tell a little about yourself and ask to remember it for filling out the resume in the future.
-- Since the summary of key information is created cyclically, all important data will always be within the AI context length, serving as the AI's long-term memory.  
-- This helps the AI retain key information even with limited context.
+### 🏗️ Long-Term Memory Logic
+- The entire process runs cyclically and covertly, without interrupting the dialogue. After a certain number of messages (defined by `summary_interval`, which can be configured in the settings — for example, for 8192 tokens, I recommend 7), the **generate_summary** function is invoked, passing instructions to the AI to create a brief, structured summary of all the key information using a template and a prioritized list. Initially, there may be some issues, you may need to provide some information about yourself and ask the AI to remember it for future summaries.
+- Since the summary of key information is generated cyclically, all important data will always remain within the AI's context window, effectively functioning as long-term memory.
+- This mechanism helps the AI retain key information even with a limited context.
 
-🛠️ **Requirements**  
-- **Python 3.10.0** (or compatible version)  
-- **FFmpeg** (needed for audio processing – ensure it is installed and added to PATH)  
-- **PyAudio, pygame, whisper, Coqui TTS, PyQt6, openai, torch, pyenchant** and other dependencies as listed in `requirements.txt`.
+---
 
-🔹 **Additional**  
-- For Russian spell checking support, add the files **ru_RU.aff** and **ru_RU.dic** to:  
-  `Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell`
+## ⚙️ Requirements
 
-📦 **Installation**
+- **Python 3.10.0** (or a compatible version)
+- **FFmpeg** (required for audio processing—ensure it is installed and added to your PATH)
+- **PyAudio, pygame, whisper, Coqui TTS, PyQt6, openai, torch, pyenchant** and other dependencies listed in `requirements.txt`.
 
-1. **Clone the repository:**  
+### 🔹 Additional
+- For Russian spell checking support, add the **ru_RU.aff** and **ru_RU.dic** files to:
+  ```
+  Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
+  ```
+
+---
+
+## 🛠️ Installation
+
+1. **Clone the Repository:**
 
    ```bash
    git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git
    cd LM-Studio-Voice-Dialogue
    ```
 
-2. **Install dependencies:**  
+2. **Install Dependencies:**
 
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Set up FFmpeg:**  
-   - Make sure FFmpeg is installed (Windows EXE Files recommended).  
-   - For Windows, download it [here](https://ffmpeg.org/download.html) and add it to your PATH.
+3. **Set Up FFmpeg:**
 
-4. **Add Spell Check Files (if using Russian):**  
-   - Download **ru_RU.aff** and **ru_RU.dic**.  
-   - Place them in the directory:  
-     `Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell`.
+   - **Download FFmpeg:**
+     - Visit the official FFmpeg website: [https://ffmpeg.org](https://ffmpeg.org) and choose the version suitable for Windows (typically EXE files).
 
-▶️ **Usage**
+   - **Extract the Archive:**
+     - After downloading (usually a .zip archive), extract it to a convenient location, for example, `C:\ffmpeg`.
 
-1. Run the application (after launching LM Studio, enabling the local server, and starting the desired AI model):  
+   - **Add FFmpeg to PATH:**
+     - Open "Control Panel" → "System" → "Advanced system settings".
+     - In the "Environment Variables" section, locate the `Path` variable and click "Edit".
+     - Add the path to the `bin` folder where FFmpeg executables are located (e.g., `C:\ffmpeg\bin`).
+
+   - **Verify the Installation:**
+     - Open Command Prompt (Win + R, type `cmd`, and press Enter).
+     - Execute `ffmpeg -version` to confirm that FFmpeg is installed correctly.
+
+4. **Add Spell Check Files (if using Russian):**
+
+   - Download **ru_RU.aff** and **ru_RU.dic**.
+   - Place them in the directory:
+     ```
+     Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
+     ```
+
+---
+
+## ▶️ Usage
+
+1. Launch the application (after starting LM Studio, enabling the local server, and loading the desired AI model):
 
    ```bash
    python En_language.py  # for English
    python Ru_language.py  # for Russian
    ```
 
-👨‍💻 **Developer**
+---
 
-This project was created as a hobby. I am not a professional programmer—my main career is in a completely different field. I developed this application out of curiosity and a desire to experiment with artificial intelligence and voice interaction.  
-The project is open to anyone interested in improving it or adapting it for their own projects.
+## 👨‍💻 Developer
 
-☕ **Coffee Donations**
+This project was created as a hobby. I am not a professional programmer—my primary career is in a different field. I developed this application out of curiosity and a desire to experiment with artificial intelligence and voice interaction.  
+The project is open to anyone interested in improving or adapting it for their own purposes.
 
-If you like the project and wish to support my experiments, you can send a small donation:  
+---
+
+## ☕ Coffee Donations
+
+If you appreciate the project and would like to support my experiments, you can send a small donation:
 
 **Bitcoin:** `bc1q0jzxrafdq5wn4yerfx5w5sckupepwn9ts2dxwp`
 
-📜 **License**
+---
 
-## Licenses
+## 📜 License
 
 This project uses the following libraries and models:
 
@@ -114,3 +145,4 @@ This project uses the following libraries and models:
 - **pyenchant** — licensed under the [LGPL License](https://opensource.org/licenses/LGPL-3.0).
 
 Please ensure you comply with the terms of these licenses before using the project.
+```
