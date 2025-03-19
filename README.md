@@ -44,9 +44,9 @@ LM-Studio-Voice-Dialogue is an application that enables voice dialogue with arti
   - Changes are saved to a JSON file; some (e.g., font size) take effect immediately, while others require a restart.
 
 ### 🏗️ Long-Term Memory Logic
-- The process runs cyclically and transparently without interrupting the dialogue. After a set number of messages (`summary_interval`, e.g., 7 for 8192 tokens), the **generate_summary** method is triggered.
-- This method instructs the AI to create a brief, structured summary of key details, ensuring essential context is preserved within the AI’s limited token window.
-- This mechanism helps maintain crucial context even when the overall context length is restricted.
+- The entire process happens cyclically and hidden, without interrupting the dialogue. After a certain number of messages (`summary_interval`), which can be adjusted in settings (e.g., for 8192 tokens, I recommend 7), **generate_summary** is called, passing instructions to the AI to create a concise, structured summary of all key information. There may be some problems at first, you need to tell a little about yourself and ask to remember it for filling out the resume in the future.
+- Since the summary of key information is created cyclically, all important data will always be within the AI context length, serving as the AI's long-term memory.  
+- This helps the AI retain key information even with limited context.
 
 ---
 
