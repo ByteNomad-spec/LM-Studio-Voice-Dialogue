@@ -1,4 +1,3 @@
-```markdown
 🗣️ **LM-Studio-Voice-Dialogue**
 
 ![LM Studio Voice Dialogue](media/screenshot.png)
