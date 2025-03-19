@@ -17,10 +17,10 @@ LM-Studio-Voice-Dialogue is an application for voice dialogue with artificial in
 - **SpellCheckHighlighter** and **SpellCheckTextEdit** integrate with **pyenchant** to highlight spelling errors in real time.  
 - Incorrect words are underlined and can be corrected via a context menu (click on the word).
 
-🎙️ **Synchronous Speech and Text Display (TTS)**  
-- **AssistantMessageWorker** divides the assistant’s reply into smaller segments, then for each segment it synthesizes the corresponding audio using the Coqui TTS model.  
-- While playing the generated audio, the worker simultaneously emits text characters with a delay calculated to match the audio duration.
-- This approach ensures that the text in the chat interface is displayed in sync with the speech playback.
+🎙️ **Synchronous Display of Speech and Text (TTS)**
+- **AssistantMessageWorker** divides the assistant's response into sentences, then for each sentence synthesizes the corresponding sound using the Coqui TTS model.
+- During the playback of the generated audio, the worker simultaneously outputs text characters with a delay calculated in accordance with the audio duration.
+- This approach eliminates delay when vocalizing long responses, and the text in the chat interface is displayed synchronously with the speech playback.
 
 ### 🧠 **AI Assistant Logic**  
 - **Audio Input & Output:**  
