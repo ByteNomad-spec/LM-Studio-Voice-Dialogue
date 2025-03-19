@@ -91,7 +91,7 @@ LM-Studio-Voice-Dialogue is an application for voice dialogue with artificial in
 👨‍💻 **Developer**
 
 This project was created as a hobby. I am not a professional programmer—my main career is in a completely different field. I developed this application out of curiosity and a desire to experiment with artificial intelligence and voice interaction.  
-The project leverages insights from interactions with AI models (including ChatGPT) and is open for anyone interested in improving or adapting it for their own projects.
+The project is open to anyone interested in improving it or adapting it for their own projects.
 
 ☕ **Coffee Donations**
 
