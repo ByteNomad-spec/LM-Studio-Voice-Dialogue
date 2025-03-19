@@ -50,7 +50,7 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 ---
 
-## 🛠️ Requirements
+## ⚙️ Requirements
 
 - **Python 3.10.0** (or a compatible version)
 - **FFmpeg** (required for audio processing—ensure it is installed and added to your PATH)
@@ -64,7 +64,7 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 ---
 
-## ⚙️ Installation
+## 🛠️ Installation
 
 1. **Clone the Repository:**
 
