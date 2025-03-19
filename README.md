@@ -3,7 +3,7 @@
 ## Screenshot  
 Here is a preview of the LM Studio Voice Dialogue interface:  
 
-![LM Studio Voice Dialogue] screenshot.png
+![LM Studio Voice Dialogue](media/screenshot.png)
 
 LM-Studio-Voice-Dialogue is an application for voice dialogue with artificial intelligence via a local Lm studio server. It includes speech synthesis (TTS), speech recognition (ASR) functions, and support for multitasking communication.  
 The application works using **Whisper** and **Coqui TTS** models to enhance text and audio processing.
@@ -32,7 +32,7 @@ The application works using **Whisper** and **Coqui TTS** models to enhance text
 - The main window includes a chat, input field, and control buttons (record, send, speak, etc.).
 
 🏗️ **Long-Term Memory Logic**  
-- The entire process happens cyclically and hidden, without interrupting the dialogue. After a certain number of messages (`summary_interval`), which can be adjusted in settings (e.g., for 8192 tokens, I recommend 8), **generate_summary** is called, passing instructions to the AI to create a concise, structured summary of all key information.  
+- The entire process happens cyclically and hidden, without interrupting the dialogue. After a certain number of messages (`summary_interval`), which can be adjusted in settings (e.g., for 8192 tokens, I recommend 7), **generate_summary** is called, passing instructions to the AI to create a concise, structured summary of all key information. There may be some problems at first, you need to tell a little about yourself and ask to remember it for filling out the resume in the future.
 - Since the summary of key information is created cyclically, all important data will always be within the AI context length, serving as the AI's long-term memory.  
 - This helps the AI retain key information even with limited context.
 
