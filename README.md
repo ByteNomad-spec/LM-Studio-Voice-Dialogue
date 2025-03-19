@@ -72,8 +72,21 @@ LM-Studio-Voice-Dialogue is an application for voice dialogue with artificial in
    ```
 
 3. **Set up FFmpeg:**  
-   - Make sure FFmpeg is installed (Windows EXE Files recommended).  
-   - For Windows, download it [here](https://ffmpeg.org/download.html) and add it to your PATH.
+**Download FFmpeg:**
+   - Visit the official FFmpeg website: [https://ffmpeg.org](https://ffmpeg.org).
+   - Choose the version suitable for Windows. Generally, these are Windows EXE files.
+
+**Extract the Archive:**
+   - After downloading the file (which may be a .zip archive), extract it to a convenient location on your computer, for example, `C:\ffmpeg`.
+
+**Add FFmpeg to PATH:**
+   - Open the "Control Panel" → "System" → "Advanced system settings".
+   - In the "Environment Variables" section, find the `Path` variable and click "Edit".
+   - Add the path to the `bin` folder, where the FFmpeg executables are located, for example, `C:\ffmpeg\bin`.
+
+**Verify the Installation:**
+   - Open the Command Prompt (Win + R, type `cmd`, and press Enter).
+   - Enter the command `ffmpeg -version`. If everything is set up correctly, you will see information about the FFmpeg version.
 
 4. **Add Spell Check Files (if using Russian):**  
    - Download **ru_RU.aff** and **ru_RU.dic**.  
