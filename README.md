@@ -5,31 +5,41 @@ Here is a preview of the LM Studio Voice Dialogue interface:
 
 ![LM Studio Voice Dialogue](media/screenshot.png)
 
-LM-Studio-Voice-Dialogue is an application for voice dialogue with artificial intelligence via a local Lm studio server. It includes speech synthesis (TTS), speech recognition (ASR) functions, and support for multitasking communication.  
-The application works using **Whisper** and **Coqui TTS** models to enhance text and audio processing.
+LM-Studio-Voice-Dialogue is an application for voice dialogue with artificial intelligence via a local LM Studio server. It includes speech synthesis (TTS), speech recognition (ASR), and support for multitasking communication. The application uses **Whisper** for speech-to-text transcription and **Coqui TTS** for high-quality speech synthesis, combined with a local OpenAI ChatCompletion API for generating responses.
 
 🚀 **Main Components**
 
-🔧 **Loading and saving settings/history** 
-- The **`load_settings` and `save_settings`** functions load and save settings in JSON files. 
-- The conversation history and message counter (Needed for the "long-term memory" mechanism) are stored separately to maintain context between launches.
+🔧 **Loading and Saving Settings & History**  
+- The **`load_settings`** and **`save_settings`** functions manage configuration in JSON files.  
+- Conversation history and a separate message counter are stored to maintain context between launches and to support the long-term memory mechanism.
 
 📝 **Spell Checking**  
-- **SpellCheckHighlighter** and **SpellCheckTextEdit** work with **pyenchant** to highlight text errors.  
-- Incorrect words can be corrected with a single click.
+- **SpellCheckHighlighter** and **SpellCheckTextEdit** integrate with **pyenchant** to highlight spelling errors in real time.  
+- Incorrect words are underlined and can be corrected via a context menu (click on the word).
 
 🎙️ **Asynchronous Speech Synthesis (TTS)**  
-- **AssistantMessageWorker** splits the text into parts, synthesizes the speech, and plays it sequentially.
+- **AssistantMessageWorker** splits the assistant’s reply into smaller parts, synthesizes the corresponding speech using the Coqui TTS model, and plays it sequentially.  
+- The worker emits text updates gradually into the chat area, ensuring the UI remains responsive during speech playback.
 
 ### 🧠 **AI Assistant Logic**  
-- Audio recording via **pyaudio**.  
-- Speech recognition with **Whisper**.  
-- Response generation via **OpenAI API**.  
-- Notifications played using **pygame.mixer**.
+- **Audio Input & Output:**  
+  - Audio is recorded using **PyAudio** and played back via **pygame.mixer**.  
+  - Whisper is used to transcribe recorded audio into text.  
+- **Response Generation:**  
+  - User messages (typed or transcribed) are sent to a local OpenAI ChatCompletion API (configured at `http://localhost:1234/v1`) using the model `"local-model"`.  
+  - The conversation history is updated with both user and assistant messages.
+- **Long-Term Memory:**  
+  - A message counter tracks the number of exchanges, and after reaching a configurable threshold (`summary_interval`), the **generate_summary** method is called.  
+  - This method generates a concise, structured summary of key information about the user and conversation, which is appended to the conversation history, ensuring that important details are preserved within the AI’s context.
 
 🖥️ **Graphical Interface (GUI) with PyQt6**  
-- The settings window allows modifying the application parameters, as well as the palette for all interface elements.  
-- The main window includes a chat, input field, and control buttons (record, send, speak, etc.).
+- The application features a modern, user-friendly interface built with **PyQt6**, divided into three main panels:  
+  - **Input Panel:** Contains the text input field (with live spell checking) and a “Send” button.  
+  - **Chat Panel:** Displays the conversation history with color-coded labels for User, Assistant, and System messages.  
+  - **Button Panel:** Provides controls for recording audio, stopping or canceling recordings, updating the voice sample, stopping speech synthesis, and accessing settings.
+- **Settings Window:**  
+  - Allows customization of parameters such as text size, TTS model, Whisper model, summary interval, and color themes.  
+  - All changes are saved to a JSON file, and some changes (like font size) take effect immediately while others require a restart.
 
 🏗️ **Long-Term Memory Logic**  
 - The entire process happens cyclically and hidden, without interrupting the dialogue. After a certain number of messages (`summary_interval`), which can be adjusted in settings (e.g., for 8192 tokens, I recommend 7), **generate_summary** is called, passing instructions to the AI to create a concise, structured summary of all key information. There may be some problems at first, you need to tell a little about yourself and ask to remember it for filling out the resume in the future.
@@ -37,60 +47,55 @@ The application works using **Whisper** and **Coqui TTS** models to enhance text
 - This helps the AI retain key information even with limited context.
 
 🛠️ **Requirements**  
-- **Recommend gemma 2 9b it Q4_K_M**  
-- **Python 3.10.0**  
-- **FFmpeg** (needed for audio processing)  
-- Install dependencies:  
-
-```bash
-pip install -r requirements.txt
-```
+- **Python 3.10.0** (or compatible version)  
+- **FFmpeg** (needed for audio processing – ensure it is installed and added to PATH)  
+- **PyAudio, pygame, whisper, Coqui TTS, PyQt6, openai, torch, pyenchant** and other dependencies as listed in `requirements.txt`.
 
 🔹 **Additional**  
-If you use the Russian language for spell checking, add the files **ru_RU.aff** and **ru_RU.dic** to:  
-`Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell`
+- For Russian spell checking support, add the files **ru_RU.aff** and **ru_RU.dic** to:  
+  `Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell`
 
 📦 **Installation**
 
-1. **Clone the repository**:  
+1. **Clone the repository:**  
 
-```bash
-git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git
-cd LM-Studio-Voice-Dialogue
-```
+   ```bash
+   git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git
+   cd LM-Studio-Voice-Dialogue
+   ```
 
-2. **Install dependencies**:  
+2. **Install dependencies:**  
 
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-3. **Set up FFmpeg**:  
-   - Make sure (Windows EXE Files) **FFmpeg** is installed.  
-   - For Windows, download it [here](https://ffmpeg.org/download.html) and add it to PATH.
+3. **Set up FFmpeg:**  
+   - Make sure FFmpeg is installed (Windows EXE Files recommended).  
+   - For Windows, download it [here](https://ffmpeg.org/download.html) and add it to your PATH.
 
-4. **Add spell check files (if using Russian)**:  
+4. **Add Spell Check Files (if using Russian):**  
    - Download **ru_RU.aff** and **ru_RU.dic**.  
-   - Place them in `Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell`.
+   - Place them in the directory:  
+     `Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell`.
 
 ▶️ **Usage**
 
-1. Run the application (after launching Lm Studio, enabling the server, and starting the desired AI model):  
+1. Run the application (after launching LM Studio, enabling the local server, and starting the desired AI model):  
 
-```bash
-python En_language.py  # for English  
-python Ru_language.py  # for Russian  
-```
+   ```bash
+   python En_language.py  # for English
+   python Ru_language.py  # for Russian
+   ```
 
 👨‍💻 **Developer**
 
-This project was created as a hobby. I am not a professional programmer — my main job is in a completely different field. However, I was curious to implement this idea and experiment with artificial intelligence.  
-The project is mostly written using the ChatGPT model (specifically, o3 Mini). I interacted with it, tested it, provided feedback, and made adjustments.  
-The code is open for anyone who wants to improve or use it in their own projects.
+This project was created as a hobby. I am not a professional programmer—my main career is in a completely different field. I developed this application out of curiosity and a desire to experiment with artificial intelligence and voice interaction.  
+The project leverages insights from interactions with AI models (including ChatGPT) and is open for anyone interested in improving or adapting it for their own projects.
 
 ☕ **Coffee Donations**
 
-If you liked the project and want to support my experiments, you can send a small donation:  
+If you like the project and wish to support my experiments, you can send a small donation:  
 
 **Bitcoin:** `bc1q0jzxrafdq5wn4yerfx5w5sckupepwn9ts2dxwp`
 

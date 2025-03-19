@@ -457,7 +457,6 @@ class VoiceAssistantBackend:
     def mouse_stop_recording(self) -> None:
         self.mouse_stop_flag = True
 
-
 # --- Settings Window ---
 class SettingsWindow(QDialog):
     def __init__(self, parent=None, current_text_size: int = 14,
