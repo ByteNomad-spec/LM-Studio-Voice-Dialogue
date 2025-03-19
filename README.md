@@ -11,8 +11,8 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 ## 🚀 Main Components
 
 ### 🔧 Settings and History Management
-- **load_settings** and **save_settings** functions manage configuration stored in JSON files.
-- Conversation history and a separate message counter are maintained to preserve context between sessions and support a long-term memory mechanism.
+- **load_settings** and **save_settings** functions manage configuration stored in settings.json.
+- conversation_history.json and a separate message_counter.json are maintained to preserve context between sessions and support a long-term memory mechanism.
 
 ### 📝 Spell Checking
 - **SpellCheckHighlighter** and **SpellCheckTextEdit** integrate with **pyenchant** to highlight spelling errors in real time.
