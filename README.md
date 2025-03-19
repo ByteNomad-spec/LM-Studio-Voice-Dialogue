@@ -19,7 +19,8 @@ LM-Studio-Voice-Dialogue is an application for voice dialogue with artificial in
 
 🎙️ **Synchronous Speech and Text Display (TTS)**  
 - **AssistantMessageWorker** divides the assistant’s reply into smaller segments, then for each segment it synthesizes the corresponding audio using the Coqui TTS model.  
-- While playing the generated audio, the worker simultaneously emits text characters with a delay calculated to match the audio duration. This approach ensures that the text appears on the chat interface in perfect synchrony with the speech playback.
+- While playing the generated audio, the worker simultaneously emits text characters with a delay calculated to match the audio duration.
+- This approach ensures that the text in the chat interface is displayed in sync with the speech playback.
 
 ### 🧠 **AI Assistant Logic**  
 - **Audio Input & Output:**  
