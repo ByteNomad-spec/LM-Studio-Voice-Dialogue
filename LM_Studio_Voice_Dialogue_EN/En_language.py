@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import sys
 import os
 import json
@@ -20,15 +19,25 @@ from TTS.api import TTS
 import torch
 import enchant
 
-from PyQt6.QtGui import QTextCursor, QFont, QColor, QTextCharFormat, QSyntaxHighlighter, QIcon
+# Attempt to import QKeySequenceEdit from QtGui; if that fails, import it from QtWidgets
+try:
+    from PyQt6.QtGui import QKeySequenceEdit
+except ImportError:
+    from PyQt6.QtWidgets import QKeySequenceEdit
+
+from PyQt6.QtGui import (
+    QTextCursor, QFont, QColor, QTextCharFormat, QSyntaxHighlighter, QIcon,
+    QKeySequence, QShortcut
+)
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QHBoxLayout, QVBoxLayout,
     QPushButton, QPlainTextEdit, QDialog,
-    QLabel, QSpinBox, QComboBox, QFormLayout, QDialogButtonBox, QMenu, QTextEdit, QColorDialog, QGroupBox, QGridLayout
+    QLabel, QSpinBox, QComboBox, QFormLayout, QDialogButtonBox, QMenu,
+    QTextEdit, QColorDialog, QGroupBox, QGridLayout
 )
 from PyQt6.QtCore import Qt, QThread, QObject, pyqtSignal, pyqtSlot
 
-# Set up logging
+# Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 # Define the root directory of the script and paths for settings/history files
@@ -39,7 +48,7 @@ MESSAGE_COUNTER_FILE = ROOT_DIR / "message_counter.json"
 
 
 def load_settings() -> dict:
-    """Loads settings from a file or returns default settings."""
+    """Load settings from a file or return default settings."""
     default_settings = {
         "text_size": 14,
         "tts_model": "tts_models/multilingual/multi-dataset/xtts_v2",
@@ -65,16 +74,29 @@ def load_settings() -> dict:
             "assistant_content_color": "#FFA500",
             "scrollbar_handle_color": "#888888",
             "scrollbar_track_color": "#444444"
+        },
+        # Hotkey settings with default values, including "send_text"
+        "hotkeys": {
+            "record_audio": "F9",
+            "stop_recording": "F10",
+            "cancel_recording": "F11",
+            "record_voice_sample": "F12",
+            "stop_generation": "F8",
+            "send_text": "F7"
         }
     }
     if SETTINGS_FILE.exists():
         try:
             with SETTINGS_FILE.open("r", encoding="utf-8") as f:
                 settings = json.load(f)
-            # Ensure all color keys exist
+            # Ensure all color keys are present
             settings.setdefault("colors", {})
             for key, val in default_settings["colors"].items():
                 settings["colors"].setdefault(key, val)
+            # Ensure hotkey settings are present
+            settings.setdefault("hotkeys", {})
+            for key, val in default_settings["hotkeys"].items():
+                settings["hotkeys"].setdefault(key, val)
             logging.info("Settings loaded successfully")
             return settings
         except Exception:
@@ -83,7 +105,7 @@ def load_settings() -> dict:
 
 
 def save_settings(settings: dict) -> None:
-    """Saves settings to a file."""
+    """Save settings to a file."""
     try:
         with SETTINGS_FILE.open("w", encoding="utf-8") as f:
             json.dump(settings, f, ensure_ascii=False, indent=2)
@@ -92,14 +114,14 @@ def save_settings(settings: dict) -> None:
         logging.exception("Error saving settings:")
 
 
-# --- Spell Check Highlighter ---
+# --- Spell-check highlighter with underlining ---
 class SpellCheckHighlighter(QSyntaxHighlighter):
     def __init__(self, document):
         super().__init__(document)
         try:
-            self.dictionary = enchant.Dict("en_US")  # Changed language to English if available
+            self.dictionary = enchant.Dict("en_US")
         except enchant.errors.DictNotFoundError:
-            logging.error("Dictionary for en_US not found. Check pyenchant installation and corresponding dictionary.")
+            logging.error("Dictionary for en_US not found. Check the pyenchant installation and dictionary availability.")
             self.dictionary = None
         self.error_format = QTextCharFormat()
         self.error_format.setUnderlineStyle(QTextCharFormat.UnderlineStyle.SingleUnderline)
@@ -114,7 +136,7 @@ class SpellCheckHighlighter(QSyntaxHighlighter):
                 self.setFormat(match.start(), match.end() - match.start(), self.error_format)
 
 
-# --- QPlainTextEdit with Spell Check ---
+# --- QPlainTextEdit with spell-check support ---
 class SpellCheckTextEdit(QPlainTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -136,7 +158,7 @@ class SpellCheckTextEdit(QPlainTextEdit):
                     cursor.insertText(action.text())
 
 
-# --- Worker for Dynamic Assistant Message Speech Synthesis ---
+# --- Worker for dynamic assistant voice synthesis ---
 class AssistantMessageWorker(QObject):
     appendChar = pyqtSignal(str)
     finished = pyqtSignal()
@@ -147,10 +169,12 @@ class AssistantMessageWorker(QObject):
         self.backend = backend
 
     def run(self) -> None:
+        # Replace dot between digits with a comma for proper TTS pronunciation
         self.text = re.sub(r"(?<=\d)\.(?=\d)", ",", self.text)
 
-        # Split text into sentences using punctuation
+        # Split the text into sentences by punctuation marks
         parts = re.split(r'(?<=[.!?])\s+', self.text)
+
         for i, part in enumerate(parts):
             if not part:
                 continue
@@ -169,8 +193,10 @@ class AssistantMessageWorker(QObject):
                 self.finished.emit()
                 return
 
-            # Keep only allowed characters while preserving punctuation
+            # Keep only allowed characters without altering punctuation marks
             normalized_part = re.sub(r"[^a-zA-Z0-9 ,!?;:+=%'/-]", "", part).rstrip(" ,!?;:")
+            normalized_part = re.sub(r"(?<=\d)\.(?=\d)", " dot ", normalized_part)
+            normalized_part = normalized_part.replace('.', ',')
             if not normalized_part.strip():
                 self.appendChar.emit("<br>" + original_part)
                 continue
@@ -190,12 +216,12 @@ class AssistantMessageWorker(QObject):
                 try:
                     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp_wav:
                         temp_wav = tmp_wav.name
-                    # Redirect output for TTS
+                    # Redirect output during TTS synthesis
                     with self.backend._suppress_output():
                         self.backend.tts_model.tts_to_file(
                             text=norm_chunk,
                             speaker_wav=str(ROOT_DIR / "speaker.wav"),
-                            language="en",
+                            language="en",  # Changed to English
                             file_path=temp_wav,
                             temperature=0.85,
                             split_sentences=False
@@ -276,7 +302,7 @@ class VoiceAssistantBackend:
 
     @contextmanager
     def _suppress_output(self):
-        # Use context managers to redirect stdout/stderr
+        # Redirect stdout/stderr to suppress unwanted output
         with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
             yield
 
@@ -410,7 +436,7 @@ class VoiceAssistantBackend:
                 model="local-model",
                 messages=self.conversation_history
             )
-            reply = response.choices[0].message.content.strip() if response.choices else "Empty reply."
+            reply = response.choices[0].message.content.strip() if response.choices else "Empty response."
         except Exception:
             logging.exception("Error generating reply:")
             reply = "Error generating reply."
@@ -425,14 +451,16 @@ class VoiceAssistantBackend:
 
     def generate_summary(self) -> None:
         summary_prompt = (
-"Create a concise, structured summary of all key information about me that will serve as your long-term memory, following the template below: "
-"1. About Me: Name, age, profession, interests, hobbies, achievements, goals, key personality traits. "
-"2. Family: Family members, names, ages, important details, events, and memories. "
-"3. Friends, Close Ones, Important Acquaintances: Names, ages, important events and details, key moments of interaction. "
-"4. Emotions: Significant emotions and feelings related to important events. "
-"5. Conversations: Key discussion topics, important moments and details, general conclusions. "
-"6. Instructions and Preferences: Special instructions, preferences, favorite things. "
-"7. Values and Beliefs: Important principles, views, and beliefs. "
+            "Using the data from our messages, create a short, structured summary of all the key information about me that will serve as your long-term memory. "
+            "Fill in and update this summary as new information is provided, following the template below: "
+            "1. About Me: name, age, location, profession, interests, hobbies, achievements, goals, key personality traits. "
+            "2. Family: family members, names, ages, locations, important details, events, and memories. "
+            "3. Friends, close ones, important acquaintances: names, ages, locations, significant events, and key details. "
+            "4. Emotions: significant emotions and feelings related to important events. "
+            "5. Conversations: key discussion topics, important moments and details, common conclusions. "
+            "6. Instructions and preferences: specific instructions, preferences, favorite things. "
+            "7. Values and beliefs: important principles, views, and beliefs. "
+            "Do not mention this summary in our conversation, as its sole purpose is to serve as your long-term memory."
         )
         self.conversation_history.append({"role": "user", "content": summary_prompt})
         self._save_history()
@@ -459,17 +487,19 @@ class VoiceAssistantBackend:
     def mouse_stop_recording(self) -> None:
         self.mouse_stop_flag = True
 
+
 # --- Settings Window ---
 class SettingsWindow(QDialog):
     def __init__(self, parent=None, current_text_size: int = 14,
                  current_tts: str = "tts_models/multilingual/multi-dataset/xtts_v2",
                  current_whisper: str = "large-v3-turbo",
                  current_summary_interval: int = 10,
-                 current_colors: dict = None) -> None:
+                 current_colors: dict = None,
+                 current_hotkeys: dict = None) -> None:
         super().__init__(parent)
         self.setWindowTitle("Settings")
         self.setModal(True)
-        self.resize(750, 400)
+        self.resize(750, 500)
         self.setStyleSheet(f"font-size: {current_text_size}px;")
         
         main_layout = QVBoxLayout(self)
@@ -480,7 +510,7 @@ class SettingsWindow(QDialog):
         self.text_size_spin = QSpinBox()
         self.text_size_spin.setRange(10, 30)
         self.text_size_spin.setValue(current_text_size)
-        general_layout.addRow(QLabel("Text Size:"), self.text_size_spin)
+        general_layout.addRow(QLabel("Text size:"), self.text_size_spin)
 
         self.tts_combo = QComboBox()
         self.tts_combo.addItems([
@@ -488,17 +518,17 @@ class SettingsWindow(QDialog):
             "tts_models/en/ljspeech/tacotron2-DDC"
         ])
         self.tts_combo.setCurrentText(current_tts)
-        general_layout.addRow(QLabel("TTS Model:"), self.tts_combo)
+        general_layout.addRow(QLabel("Speech synthesis model:"), self.tts_combo)
 
         self.whisper_combo = QComboBox()
         self.whisper_combo.addItems(["tiny", "base", "small", "medium", "large-v3-turbo"])
         self.whisper_combo.setCurrentText(current_whisper)
-        general_layout.addRow(QLabel("Speech Recognition Model:"), self.whisper_combo)
+        general_layout.addRow(QLabel("Recognition model:"), self.whisper_combo)
 
         self.summary_spin = QSpinBox()
         self.summary_spin.setRange(1, 1000)
         self.summary_spin.setValue(current_summary_interval)
-        general_layout.addRow(QLabel("Messages before Summary:"), self.summary_spin)
+        general_layout.addRow(QLabel("Messages before summary:"), self.summary_spin)
         general_group.setLayout(general_layout)
         
         colors_group = QGroupBox("Color Settings")
@@ -532,24 +562,24 @@ class SettingsWindow(QDialog):
 
         self.color_buttons = {}
         color_options = [
-            ("Input Field Background", "text_input_bg"),
-            ("Input Field Text Color", "text_input_text"),
-            ("Chat Area Background", "chat_bg"),
-            ("System Log Background", "system_log_bg"),
-            ("System Log Text Color", "system_log_text"),
-            ("Button Background", "button_bg"),
-            ("Button Text Color", "button_text"),
-            ("Button Hover Color", "button_hover_color"),
-            ("Panel Background", "panel_bg"),
-            ("Main Window Background", "window_bg"),
-            ("'System:' Label Color", "system_label_color"),
-            ("'System:' Text Color", "system_content_color"),
-            ("'User:' Label Color", "user_label_color"),
-            ("'User:' Text Color", "user_content_color"),
-            ("'Assistant:' Label Color", "assistant_label_color"),
-            ("'Assistant:' Text Color", "chat_text"),
-            ("Scrollbar Handle Color", "scrollbar_handle_color"),
-            ("Scrollbar Track Color", "scrollbar_track_color")
+            ("Input field background", "text_input_bg"),
+            ("Input field text color", "text_input_text"),
+            ("Chat area background", "chat_bg"),
+            ("System log background", "system_log_bg"),
+            ("System log text color", "system_log_text"),
+            ("Button background", "button_bg"),
+            ("Button text color", "button_text"),
+            ("Button hover color", "button_hover_color"),
+            ("Panel background", "panel_bg"),
+            ("Main window background", "window_bg"),
+            ("'System:' label color", "system_label_color"),
+            ("'System:' text color", "system_content_color"),
+            ("'User:' label color", "user_label_color"),
+            ("'User:' text color", "user_content_color"),
+            ("'Assistant:' label color", "assistant_label_color"),
+            ("'Assistant:' text color", "chat_text"),
+            ("Scrollbar handle color", "scrollbar_handle_color"),
+            ("Scrollbar track color", "scrollbar_track_color")
         ]
         row = 0
         for label_text, key in color_options:
@@ -564,8 +594,40 @@ class SettingsWindow(QDialog):
             row += 1
         colors_group.setLayout(colors_layout)
         
+        # --- New group for hotkeys ---
+        hotkeys_group = QGroupBox("Hotkeys")
+        hotkeys_layout = QFormLayout()
+        self.hotkey_edits = {}
+        # Default function keys and their labels, including "send_text"
+        hotkey_options = [
+            ("record_audio", "Record audio:"),
+            ("stop_recording", "Stop recording:"),
+            ("cancel_recording", "Cancel recording:"),
+            ("record_voice_sample", "Voice sample:"),
+            ("stop_generation", "Stop voice synthesis:"),
+            ("send_text", "Send:")
+        ]
+        if current_hotkeys is None:
+            current_hotkeys = {
+                "record_audio": "F9",
+                "stop_recording": "F10",
+                "cancel_recording": "F11",
+                "record_voice_sample": "F12",
+                "stop_generation": "F8",
+                "send_text": "F7"
+            }
+        for key, label in hotkey_options:
+            lbl = QLabel(label)
+            key_edit = QKeySequenceEdit()
+            key_edit.setKeySequence(QKeySequence(current_hotkeys.get(key, "")))
+            self.hotkey_edits[key] = key_edit
+            hotkeys_layout.addRow(lbl, key_edit)
+        hotkeys_group.setLayout(hotkeys_layout)
+        
+        # Arrange groups in a horizontal layout
         groups_layout.addWidget(general_group)
         groups_layout.addWidget(colors_group)
+        groups_layout.addWidget(hotkeys_group)
         main_layout.addLayout(groups_layout)
         
         self.buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
@@ -574,18 +636,23 @@ class SettingsWindow(QDialog):
         main_layout.addWidget(self.buttons)
 
     def choose_color(self, key: str, button: QPushButton) -> None:
-        color = QColorDialog.getColor(QColor(self.colors[key]), self, "Choose Color")
+        color = QColorDialog.getColor(QColor(self.colors[key]), self, "Choose color")
         if color.isValid():
             self.colors[key] = color.name()
             button.setStyleSheet(f"background-color: {color.name()};")
 
     def get_settings(self) -> dict:
+        # Collect hotkeys from QKeySequenceEdit
+        hotkeys = {}
+        for key, editor in self.hotkey_edits.items():
+            hotkeys[key] = editor.keySequence().toString()
         return {
             "text_size": self.text_size_spin.value(),
             "tts_model": self.tts_combo.currentText(),
             "whisper_model": self.whisper_combo.currentText(),
             "summary_interval": self.summary_spin.value(),
-            "colors": self.colors
+            "colors": self.colors,
+            "hotkeys": hotkeys
         }
 
 
@@ -603,7 +670,9 @@ class VoiceAssistantUI(QWidget):
         self.replyReady.connect(self.start_assistant_message_worker)
         self.transcribedTextReady.connect(self.append_user_message)
         self.synthesis_active = False
+        self.shortcuts = {}  # Store hotkeys here
         self.init_ui()
+        self.update_hotkeys()
         self.update_system_message("Ready to work!")
 
     def init_ui(self) -> None:
@@ -616,7 +685,7 @@ class VoiceAssistantUI(QWidget):
         main_layout.setContentsMargins(10, 10, 10, 10)
         main_layout.setSpacing(10)
 
-        # Text Input Panel
+        # Text input panel
         self.input_panel = QWidget()
         panel_bg = self.settings["colors"].get("panel_bg", "#3F3F3F")
         self.input_panel.setStyleSheet(f"background-color: {panel_bg}; border-radius: 15px;")
@@ -670,7 +739,7 @@ class VoiceAssistantUI(QWidget):
         self.input_panel.setFixedWidth(220)
         main_layout.addWidget(self.input_panel)
 
-        # Chat Panel
+        # Chat panel
         self.chat_panel = QWidget()
         self.chat_panel.setStyleSheet(f"background-color: {panel_bg}; border-radius: 15px;")
         chat_layout = QVBoxLayout(self.chat_panel)
@@ -738,34 +807,34 @@ class VoiceAssistantUI(QWidget):
         chat_layout.addWidget(self.system_log, stretch=0)
         main_layout.addWidget(self.chat_panel, stretch=1)
 
-        # Button Panel
+        # Button panel
         self.button_panel = QWidget()
         self.button_panel.setStyleSheet(f"background-color: {panel_bg}; border-radius: 15px;")
         btn_layout = QVBoxLayout(self.button_panel)
         btn_layout.setContentsMargins(15, 15, 15, 15)
         btn_layout.setSpacing(10)
 
-        self.btn_record = QPushButton("Record Audio")
+        self.btn_record = QPushButton("Record audio")
         self.style_round_button(self.btn_record)
         self.btn_record.clicked.connect(self.on_record_audio)
         btn_layout.addWidget(self.btn_record)
 
-        self.btn_stop_record = QPushButton("Stop Recording")
+        self.btn_stop_record = QPushButton("Stop recording")
         self.style_round_button(self.btn_stop_record)
         self.btn_stop_record.clicked.connect(self.on_stop_recording)
         btn_layout.addWidget(self.btn_stop_record)
 
-        self.btn_cancel = QPushButton("Cancel Recording")
+        self.btn_cancel = QPushButton("Cancel recording")
         self.style_round_button(self.btn_cancel)
         self.btn_cancel.clicked.connect(self.on_cancel_recording)
         btn_layout.addWidget(self.btn_cancel)
 
-        self.btn_voice = QPushButton("Voice Sample")
+        self.btn_voice = QPushButton("Voice sample")
         self.style_round_button(self.btn_voice)
         self.btn_voice.clicked.connect(self.on_record_voice_sample)
         btn_layout.addWidget(self.btn_voice)
 
-        self.btn_stop_gen = QPushButton("Stop Speech")
+        self.btn_stop_gen = QPushButton("Stop voice synthesis")
         self.style_round_button(self.btn_stop_gen)
         self.btn_stop_gen.clicked.connect(self.on_stop_generation)
         btn_layout.addWidget(self.btn_stop_gen)
@@ -807,7 +876,7 @@ class VoiceAssistantUI(QWidget):
             self.style_round_button(btn)
 
     def apply_styles(self) -> None:
-        """Updates styles for all widgets based on current settings."""
+        """Update styles for all widgets based on current settings."""
         scrollbar_handle_color = self.settings["colors"].get("scrollbar_handle_color", "#888888")
         scrollbar_track_color = self.settings["colors"].get("scrollbar_track_color", "#444444")
         text_input_bg = self.settings["colors"].get("text_input_bg", "#2F2F2F")
@@ -935,7 +1004,7 @@ class VoiceAssistantUI(QWidget):
         assistant_content_color = self.settings["colors"].get("assistant_content_color", "#FFA500")
         cursor.insertHtml(f"<p><b style='color: {assistant_label_color};'>Assistant:</b> <span style='color: {assistant_content_color};'>")
         self.chat_edit.setTextCursor(cursor)
-        self.update_system_message("Speaking...")
+        self.update_system_message("Synthesizing voice...")
 
         self.worker_thread = QThread()
         self.worker = AssistantMessageWorker(text, self.backend)
@@ -973,14 +1042,14 @@ class VoiceAssistantUI(QWidget):
 
     def on_send_text(self) -> None:
         if not self.backend.input_enabled:
-            self.update_system_message("Wait for speech to finish!")
+            self.update_system_message("Please wait for voice synthesis to complete!")
             return
         user_text = self.text_input.toPlainText().strip()
         if not user_text:
             return
         self.text_input.setEnabled(False)
         self.btn_record.setEnabled(False)
-        self.btn_send_text.setEnabled(False)  # Disable "Send" button upon sending
+        self.btn_send_text.setEnabled(False)  # Disable "Send" button during sending
         self.backend._play_sound("input")
         self.append_user_message(user_text)
         self.text_input.clear()
@@ -997,12 +1066,12 @@ class VoiceAssistantUI(QWidget):
 
     def on_record_audio(self) -> None:
         if not self.backend.input_enabled or self.backend.recording_in_progress:
-            self.update_system_message("Wait for speech to finish or recording is already in progress!")
+            self.update_system_message("Please wait for voice synthesis to complete or recording is already in progress!")
             return
         if self.synthesis_active:
-            self.update_system_message("Wait for speech to finish!")
+            self.update_system_message("Please wait for voice synthesis to complete!")
             return
-        self.update_system_message("Recording... Please speak.")
+        self.update_system_message("Recording in progress, please speak...")
         self.backend.recording_in_progress = True
         self.text_input.setEnabled(False)
         self.btn_record.setEnabled(False)
@@ -1028,32 +1097,31 @@ class VoiceAssistantUI(QWidget):
 
     def on_stop_recording(self) -> None:
         if not self.backend.input_enabled:
-            self.update_system_message("Wait for speech to finish!")
+            self.update_system_message("Please wait for voice synthesis to complete!")
             return
         self.update_system_message("Recording stopped.")
         self.backend.mouse_stop_recording()
 
     def on_cancel_recording(self) -> None:
         if not self.backend.input_enabled:
-            self.update_system_message("Wait for speech to finish!")
+            self.update_system_message("Please wait for voice synthesis to complete!")
             return
         self.update_system_message("Recording canceled.")
         self.backend.cancel_recording()
 
     def on_record_voice_sample(self) -> None:
         if not self.backend.input_enabled:
-            self.update_system_message("Wait for speech to finish!")
+            self.update_system_message("Please wait for voice synthesis to complete!")
             return
         self.update_system_message("Voice sample recording started...")
         threading.Thread(target=self.backend.record_voice_sample, daemon=True).start()
 
     def on_stop_generation(self) -> None:
         if not self.synthesis_active:
-            self.update_system_message("No active speech to stop.")
+            self.update_system_message("No active voice synthesis to stop.")
             return
-        self.update_system_message("Speech stopped.")
+        self.update_system_message("Voice synthesis stopped.")
         self.backend.stop_generation()
-        # Input and "Send" button will be enabled in on_assistant_message_finished after speech completes.
 
     def open_settings(self) -> None:
         settings_dialog = SettingsWindow(
@@ -1062,7 +1130,8 @@ class VoiceAssistantUI(QWidget):
             current_tts=self.settings.get("tts_model", "tts_models/multilingual/multi-dataset/xtts_v2"),
             current_whisper=self.settings.get("whisper_model", "large-v3-turbo"),
             current_summary_interval=self.settings.get("summary_interval", 10),
-            current_colors=self.settings.get("colors", {})
+            current_colors=self.settings.get("colors", {}),
+            current_hotkeys=self.settings.get("hotkeys", {})
         )
         if settings_dialog.exec() == QDialog.DialogCode.Accepted:
             new_settings = settings_dialog.get_settings()
@@ -1071,7 +1140,35 @@ class VoiceAssistantUI(QWidget):
             save_settings(self.settings)
             QApplication.instance().setFont(QFont("Arial", self.current_text_size))
             self.apply_styles()
-            self.update_system_message("Some settings changes will take effect after restarting the application.")
+            self.update_hotkeys()
+            self.update_system_message("Some settings changes will be applied after restarting the application.")
+
+    def update_hotkeys(self) -> None:
+        """Create/update hotkeys according to current settings."""
+        # Remove previously created hotkeys if they exist
+        for shortcut in self.shortcuts.values():
+            shortcut.disconnect()
+            shortcut.setParent(None)
+        self.shortcuts.clear()
+        hotkeys = self.settings.get("hotkeys", {})
+        if "record_audio" in hotkeys:
+            self.shortcuts["record_audio"] = QShortcut(QKeySequence(hotkeys["record_audio"]), self)
+            self.shortcuts["record_audio"].activated.connect(self.on_record_audio)
+        if "stop_recording" in hotkeys:
+            self.shortcuts["stop_recording"] = QShortcut(QKeySequence(hotkeys["stop_recording"]), self)
+            self.shortcuts["stop_recording"].activated.connect(self.on_stop_recording)
+        if "cancel_recording" in hotkeys:
+            self.shortcuts["cancel_recording"] = QShortcut(QKeySequence(hotkeys["cancel_recording"]), self)
+            self.shortcuts["cancel_recording"].activated.connect(self.on_cancel_recording)
+        if "record_voice_sample" in hotkeys:
+            self.shortcuts["record_voice_sample"] = QShortcut(QKeySequence(hotkeys["record_voice_sample"]), self)
+            self.shortcuts["record_voice_sample"].activated.connect(self.on_record_voice_sample)
+        if "stop_generation" in hotkeys:
+            self.shortcuts["stop_generation"] = QShortcut(QKeySequence(hotkeys["stop_generation"]), self)
+            self.shortcuts["stop_generation"].activated.connect(self.on_stop_generation)
+        if "send_text" in hotkeys:
+            self.shortcuts["send_text"] = QShortcut(QKeySequence(hotkeys["send_text"]), self)
+            self.shortcuts["send_text"].activated.connect(self.on_send_text)
 
 
 def main() -> None:

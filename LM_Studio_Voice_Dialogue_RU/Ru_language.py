@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import sys
 import os
 import json
@@ -20,11 +19,21 @@ from TTS.api import TTS
 import torch
 import enchant
 
-from PyQt6.QtGui import QTextCursor, QFont, QColor, QTextCharFormat, QSyntaxHighlighter, QIcon
+# Попытка импортировать QKeySequenceEdit из QtGui, если не получится — импорт из QtWidgets
+try:
+    from PyQt6.QtGui import QKeySequenceEdit
+except ImportError:
+    from PyQt6.QtWidgets import QKeySequenceEdit
+
+from PyQt6.QtGui import (
+    QTextCursor, QFont, QColor, QTextCharFormat, QSyntaxHighlighter, QIcon,
+    QKeySequence, QShortcut
+)
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QHBoxLayout, QVBoxLayout,
     QPushButton, QPlainTextEdit, QDialog,
-    QLabel, QSpinBox, QComboBox, QFormLayout, QDialogButtonBox, QMenu, QTextEdit, QColorDialog, QGroupBox, QGridLayout
+    QLabel, QSpinBox, QComboBox, QFormLayout, QDialogButtonBox, QMenu,
+    QTextEdit, QColorDialog, QGroupBox, QGridLayout
 )
 from PyQt6.QtCore import Qt, QThread, QObject, pyqtSignal, pyqtSlot
 
@@ -65,6 +74,15 @@ def load_settings() -> dict:
             "assistant_content_color": "#FFA500",
             "scrollbar_handle_color": "#888888",
             "scrollbar_track_color": "#444444"
+        },
+        # Добавляем настройки горячих клавиш с дефолтными значениями, включая "send_text"
+        "hotkeys": {
+            "record_audio": "F9",
+            "stop_recording": "F10",
+            "cancel_recording": "F11",
+            "record_voice_sample": "F12",
+            "stop_generation": "F8",
+            "send_text": "F7"
         }
     }
     if SETTINGS_FILE.exists():
@@ -75,6 +93,10 @@ def load_settings() -> dict:
             settings.setdefault("colors", {})
             for key, val in default_settings["colors"].items():
                 settings["colors"].setdefault(key, val)
+            # Обеспечиваем наличие настроек горячих клавиш
+            settings.setdefault("hotkeys", {})
+            for key, val in default_settings["hotkeys"].items():
+                settings["hotkeys"].setdefault(key, val)
             logging.info("Настройки успешно загружены")
             return settings
         except Exception:
@@ -151,6 +173,7 @@ class AssistantMessageWorker(QObject):
 
         # Разбиваем текст на предложения по знакам препинания
         parts = re.split(r'(?<=[.!?])\s+', self.text)
+
         for i, part in enumerate(parts):
             if not part:
                 continue
@@ -171,6 +194,8 @@ class AssistantMessageWorker(QObject):
 
             # Оставляем только нужные символы, не меняя знаков препинания
             normalized_part = re.sub(r"[^a-zA-Zа-яА-ЯёЁ0-9 ,!?;:+=%'/-]", "", part).rstrip(" ,!?;:")
+            normalized_part = re.sub(r"(?<=\d)\.(?=\d)", " точка ", normalized_part)
+            normalized_part = normalized_part.replace('.', ',')
             if not normalized_part.strip():
                 self.appendChar.emit("<br>" + original_part)
                 continue
@@ -425,15 +450,16 @@ class VoiceAssistantBackend:
 
     def generate_summary(self) -> None:
         summary_prompt = (
-"Создай сжатое структурированное резюме всей ключевой информации обо мне, которое будет служить тебе в качестве долговременной памяти, следуя нижеприведенному шаблону: "
-"1. Обо мне: имя, возраст, профессия, интересы, хобби, достижения, цели, ключевые черты характера. "
-"2. Семья: члены семьи, имена, возраст, важные детали, события и воспоминания. "
-"3. Друзья, близкие, важные знакомые: имена, возраст, важные события и детали, ключевые моменты общения. "
-"4. Эмоции: значимые эмоции и чувства, связанные с важными событиями. "
-"5. Разговоры: ключевые темы обсуждений, важные моменты и детали, общие выводы. "
-"6. Указания и предпочтения: особые инструкции, предпочтения, любимые вещи. "
-"7. Ценности и убеждения: важные принципы, взгляды и убеждения. "
-       )
+            "На основе данных из наших сообщений, создай сжатое структурированное резюме всей ключевой информации обо мне, которое будет служить тебе в качестве долговременной памяти, заполняй и обновляй это резюме по мере поступления информации, следуя нижеприведенному шаблону: "
+            "1. Обо мне: имя, возраст, место проживания, профессия, интересы, хобби, достижения, цели, ключевые черты характера. "
+            "2. Семья: члены семьи, имена, возраст, место проживания, важные детали, события и воспоминания. "
+            "3. Друзья, близкие, важные знакомые: имена, возраст, место проживания, важные события и ключевые детали. "
+            "4. Эмоции: значимые эмоции и чувства, связанные с важными событиями. "
+            "5. Разговоры: ключевые темы обсуждений, важные моменты и детали, общие выводы. "
+            "6. Указания и предпочтения: особые инструкции, предпочтения, любимые вещи. "
+            "7. Ценности и убеждения: важные принципы, взгляды и убеждения. "
+            "Не упоминай об этом резюме в разговоре со мной, так как единственная цель данного резюме — обеспечить тебя долговременной памятью."
+        )
         self.conversation_history.append({"role": "user", "content": summary_prompt})
         self._save_history()
         try:
@@ -459,17 +485,19 @@ class VoiceAssistantBackend:
     def mouse_stop_recording(self) -> None:
         self.mouse_stop_flag = True
 
+
 # --- Окно настроек ---
 class SettingsWindow(QDialog):
     def __init__(self, parent=None, current_text_size: int = 14,
                  current_tts: str = "tts_models/multilingual/multi-dataset/xtts_v2",
                  current_whisper: str = "large-v3-turbo",
                  current_summary_interval: int = 10,
-                 current_colors: dict = None) -> None:
+                 current_colors: dict = None,
+                 current_hotkeys: dict = None) -> None:
         super().__init__(parent)
         self.setWindowTitle("Настройки")
         self.setModal(True)
-        self.resize(750, 400)
+        self.resize(750, 500)
         self.setStyleSheet(f"font-size: {current_text_size}px;")
         
         main_layout = QVBoxLayout(self)
@@ -564,8 +592,40 @@ class SettingsWindow(QDialog):
             row += 1
         colors_group.setLayout(colors_layout)
         
+        # --- Новая группа для горячих клавиш ---
+        hotkeys_group = QGroupBox("Горячие клавиши")
+        hotkeys_layout = QFormLayout()
+        self.hotkey_edits = {}
+        # Дефолтные названия функций (ключи) и их подписи, добавлена опция для "send_text"
+        hotkey_options = [
+            ("record_audio", "Запись аудио:"),
+            ("stop_recording", "Остановить запись:"),
+            ("cancel_recording", "Отменить запись:"),
+            ("record_voice_sample", "Голосовой образец:"),
+            ("stop_generation", "Остановить озвучку:"),
+            ("send_text", "Отправить:")
+        ]
+        if current_hotkeys is None:
+            current_hotkeys = {
+                "record_audio": "F9",
+                "stop_recording": "F10",
+                "cancel_recording": "F11",
+                "record_voice_sample": "F12",
+                "stop_generation": "F8",
+                "send_text": "F7"
+            }
+        for key, label in hotkey_options:
+            lbl = QLabel(label)
+            key_edit = QKeySequenceEdit()
+            key_edit.setKeySequence(QKeySequence(current_hotkeys.get(key, "")))
+            self.hotkey_edits[key] = key_edit
+            hotkeys_layout.addRow(lbl, key_edit)
+        hotkeys_group.setLayout(hotkeys_layout)
+        
+        # Располагаем группы в общем горизонтальном лейауте
         groups_layout.addWidget(general_group)
         groups_layout.addWidget(colors_group)
+        groups_layout.addWidget(hotkeys_group)
         main_layout.addLayout(groups_layout)
         
         self.buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
@@ -580,12 +640,18 @@ class SettingsWindow(QDialog):
             button.setStyleSheet(f"background-color: {color.name()};")
 
     def get_settings(self) -> dict:
+        # Собираем горячие клавиши из QKeySequenceEdit
+        hotkeys = {}
+        for key, editor in self.hotkey_edits.items():
+            # Получаем строковое представление комбинации клавиш
+            hotkeys[key] = editor.keySequence().toString()
         return {
             "text_size": self.text_size_spin.value(),
             "tts_model": self.tts_combo.currentText(),
             "whisper_model": self.whisper_combo.currentText(),
             "summary_interval": self.summary_spin.value(),
-            "colors": self.colors
+            "colors": self.colors,
+            "hotkeys": hotkeys
         }
 
 
@@ -603,7 +669,9 @@ class VoiceAssistantUI(QWidget):
         self.replyReady.connect(self.start_assistant_message_worker)
         self.transcribedTextReady.connect(self.append_user_message)
         self.synthesis_active = False
+        self.shortcuts = {}  # Для хранения горячих клавиш
         self.init_ui()
+        self.update_hotkeys()
         self.update_system_message("Готов к работе!")
 
     def init_ui(self) -> None:
@@ -1053,7 +1121,6 @@ class VoiceAssistantUI(QWidget):
             return
         self.update_system_message("Озвучка остановлена.")
         self.backend.stop_generation()
-        # Ввод (и кнопка "Отправить") будут активированы в on_assistant_message_finished после завершения озвучки.
 
     def open_settings(self) -> None:
         settings_dialog = SettingsWindow(
@@ -1062,7 +1129,8 @@ class VoiceAssistantUI(QWidget):
             current_tts=self.settings.get("tts_model", "tts_models/multilingual/multi-dataset/xtts_v2"),
             current_whisper=self.settings.get("whisper_model", "large-v3-turbo"),
             current_summary_interval=self.settings.get("summary_interval", 10),
-            current_colors=self.settings.get("colors", {})
+            current_colors=self.settings.get("colors", {}),
+            current_hotkeys=self.settings.get("hotkeys", {})
         )
         if settings_dialog.exec() == QDialog.DialogCode.Accepted:
             new_settings = settings_dialog.get_settings()
@@ -1071,8 +1139,35 @@ class VoiceAssistantUI(QWidget):
             save_settings(self.settings)
             QApplication.instance().setFont(QFont("Arial", self.current_text_size))
             self.apply_styles()
+            self.update_hotkeys()
             self.update_system_message("Некоторые изменения настроек будут применены после перезапуска приложения.")
 
+    def update_hotkeys(self) -> None:
+        """Создаёт/обновляет горячие клавиши согласно текущим настройкам."""
+        # Если есть ранее созданные горячие клавиши, удаляем их
+        for shortcut in self.shortcuts.values():
+            shortcut.disconnect()
+            shortcut.setParent(None)
+        self.shortcuts.clear()
+        hotkeys = self.settings.get("hotkeys", {})
+        if "record_audio" in hotkeys:
+            self.shortcuts["record_audio"] = QShortcut(QKeySequence(hotkeys["record_audio"]), self)
+            self.shortcuts["record_audio"].activated.connect(self.on_record_audio)
+        if "stop_recording" in hotkeys:
+            self.shortcuts["stop_recording"] = QShortcut(QKeySequence(hotkeys["stop_recording"]), self)
+            self.shortcuts["stop_recording"].activated.connect(self.on_stop_recording)
+        if "cancel_recording" in hotkeys:
+            self.shortcuts["cancel_recording"] = QShortcut(QKeySequence(hotkeys["cancel_recording"]), self)
+            self.shortcuts["cancel_recording"].activated.connect(self.on_cancel_recording)
+        if "record_voice_sample" in hotkeys:
+            self.shortcuts["record_voice_sample"] = QShortcut(QKeySequence(hotkeys["record_voice_sample"]), self)
+            self.shortcuts["record_voice_sample"].activated.connect(self.on_record_voice_sample)
+        if "stop_generation" in hotkeys:
+            self.shortcuts["stop_generation"] = QShortcut(QKeySequence(hotkeys["stop_generation"]), self)
+            self.shortcuts["stop_generation"].activated.connect(self.on_stop_generation)
+        if "send_text" in hotkeys:
+            self.shortcuts["send_text"] = QShortcut(QKeySequence(hotkeys["send_text"]), self)
+            self.shortcuts["send_text"].activated.connect(self.on_send_text)
 
 def main() -> None:
     settings = load_settings()

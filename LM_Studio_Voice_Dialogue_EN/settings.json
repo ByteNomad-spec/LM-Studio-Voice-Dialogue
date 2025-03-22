@@ -2,7 +2,7 @@
   "text_size": 14,
   "tts_model": "tts_models/multilingual/multi-dataset/xtts_v2",
   "whisper_model": "large-v3-turbo",
-  "summary_interval": 7,
+  "summary_interval": 8,
   "colors": {
     "text_input_bg": "#0d1318",
     "text_input_text": "#cbcbcb",
@@ -23,5 +23,13 @@
     "assistant_content_color": "#ff17c1",
     "scrollbar_handle_color": "#222d36",
     "scrollbar_track_color": "#161e24"
+  },
+  "hotkeys": {
+    "record_audio": "",
+    "stop_recording": "",
+    "cancel_recording": "",
+    "record_voice_sample": "",
+    "stop_generation": "",
+    "send_text": ""
   }
 }
