@@ -64,96 +64,113 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 ---
 
-## 🛠️ Installation
+### 🛠️ Installation
 
-### 1. Install Git (If Not Already Installed)  
-Before cloning the repository, press the `Win + R` keys simultaneously.  
-In the run dialog that appears, type `cmd` and press **Enter**, 
-check if Git is installed by running:
+#### 1. Install Python 3.10.0 and pip  
+If Python is not installed on your system, follow these steps:
 
+- **Download Python 3.10.0:**  
+  Visit the [official Python website](https://www.python.org/downloads/release/python-3100/) and download the Windows installer for Python 3.10.0.  
+  **Important:** During installation, check the “Add Python to PATH” option. Since Python 3.4, pip is installed automatically.
+
+- **Verify Python and pip Installation:**  
+  Open Command Prompt or PowerShell and run:
+  ```bash
+  python --version
+  pip --version
+  ```
+  If pip is missing for some reason, follow the [official pip installation instructions](https://pip.pypa.io/en/stable/installation/).
+
+---
+
+#### 2. Install Git (If Not Already Installed)  
+Before cloning the repository, ensure Git is installed on your computer:
+
+- **Check Git Installation:**  
+  Open Command Prompt or PowerShell and run:
+  ```bash
+  git --version
+  ```
+  If Git is not installed, open Command Prompt or PowerShell **as an Administrator** and run:
+  ```bash
+  winget install --id Git.Git -e --source winget
+  ```
+  After installation, verify by running `git --version`.
+
+---
+
+#### 3. Clone the Repository
+
+Clone the project repository and navigate to its directory:
 ```bash
-git --version
+git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git
+cd LM-Studio-Voice-Dialogue
 ```
 
-If you see an error or no version information, install Git by opening Command Prompt or PowerShell **as an Administrator** and running:
+---
 
-```bash
-winget install --id Git.Git -e --source winget
-```
+#### 4. (Optional) Create a Python Virtual Environment  
+Creating an isolated environment is recommended to avoid dependency conflicts.
+
+- **Create the Virtual Environment:**  
+  In the repository folder, run:
+  ```bash
+  python -m venv env
+  ```
+- **Activate the Environment (Windows):**  
+  Run:
+  ```bash
+  env\Scripts\activate
+  ```
+  Your terminal prompt should now indicate that the virtual environment is active.
 
 ---
 
-### 2. Clone the Repository
-
-   ```bash
-   git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git
-   cd LM-Studio-Voice-Dialogue
-   ```
-
----
-
-### 3. (Optional) Create a Python Virtual Environment  
-Creating an isolated environment is recommended to avoid dependency conflicts with other projects. This step is optional.
-
-1. **Inside the Repository Folder:**  
-   Create a virtual environment named `env` by running:
-   ```bash
-   python -m venv env
-   ```
-2. **Activate the Virtual Environment (Windows):**
-   ```bash
-   env\Scripts\activate
-   ```
-   Your terminal prompt will change to show that you are now operating within the virtual environment.
-
----
-
-### 4. Install Dependencies  
-With your virtual environment activated—or directly in the repository folder if you skipped the environment step—install the required packages:
-
+#### 5. Install Dependencies  
+With your virtual environment activated (or directly in the repository folder if not using one), install the required packages:
 ```bash
 pip install -r requirements.txt
 ```
-
-*Note:* Both the English and Russian versions share the same dependencies.
+*Note:* The dependencies are the same for both the English and Russian versions.
 
 ---
 
-### 5. Set Up FFmpeg  
+#### 6. Set Up FFmpeg  
 FFmpeg is required for audio processing. Follow these steps:
 
 - **Download FFmpeg:**  
-  Visit [https://ffmpeg.org](https://ffmpeg.org) and download the Windows version (usually provided as a ZIP archive).
+  Visit the [official FFmpeg website](https://ffmpeg.org) and download the Windows ZIP archive.
 
-- **Extract the Archive:**  
-  Extract the contents to a convenient location such as `C:\ffmpeg`.
+- **Extract FFmpeg:**  
+  Extract the archive to a convenient location (e.g., `C:\ffmpeg`).
 
 - **Add FFmpeg to PATH:**  
-1. Open **Control Panel** → **System** → **Advanced system settings**.
-2. Click on **Environment Variables**.
-3. In the "System variables" section, locate and select the `Path` variable, then click **Edit**.
-4. Add the full path to the `bin` folder within your FFmpeg directory (e.g., `C:\ffmpeg\bin`).
+  1. Open **Control Panel** → **System** → **Advanced system settings**.  
+  2. Click on **Environment Variables**.  
+  3. In the “System variables” section, select the `Path` variable and click **Edit**.  
+  4. Add the full path to the `bin` folder inside your FFmpeg directory (e.g., `C:\ffmpeg\bin`).
 
-- **Verify the Installation:**  
+- **Verify FFmpeg Installation:**  
   Open a new Command Prompt window and run:
   ```bash
   ffmpeg -version
   ```
-  This should display FFmpeg’s version details if the setup is correct.
+  If the installation is successful, you will see FFmpeg’s version details.
 
 ---
 
-### 6. Add Spell Check Files (For the Russian Version Only)  
-If you are using the Russian version of the program, perform these additional steps:
+#### 7. Add Spell Check Files (For the Russian Version Only)  
+For the Russian version of the application, download the `ru_RU.aff` and `ru_RU.dic` files and place them in the following directory:
 
-1. **Download the Files:**  
-   Obtain the spell check files `ru_RU.aff` and `ru_RU.dic`.
+- **Download the Files:**  
+  Obtain the `ru_RU.aff` and `ru_RU.dic` files.
 
-2. **Place the Files:**  
-   Copy both files into the following directory within your project’s virtual environment:
-   ```
-   LM_Studio_Voice_Dialogue_RU\env\Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
-   ```
+- **Copy the Files:**  
+  Copy both files to:
+  ```
+  LM_Studio_Voice_Dialogue_RU\env\Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
+  ```
+  *Note:* If you use a global Python installation or a different environment setup, adjust the path accordingly.
 
 ---
 
