@@ -71,15 +71,15 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
    To create a virtual environment, run:  
    ```bash
-   python -m venv your_env_name
+   python -m venv env
    ```
 
-   Replace `your_env_name` with any name of your choice. You can freely choose the name, but it's better to stick to alphanumeric characters, underscores (`_`), or hyphens (`-`) to avoid technical issues.
+   Replace `env` with any name of your choice. You can freely choose the name, but it's better to stick to alphanumeric characters, underscores (`_`), or hyphens (`-`) to avoid technical issues.
 
    To activate the environment:  
    - On Windows:  
      ```bash
-     your_env_name\Scripts\activate
+     env\Scripts\activate
      ```
 
 2. **Clone the Repository:**  
