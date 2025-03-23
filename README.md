@@ -66,73 +66,100 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 ## 🛠️ Installation
 
-1. **Clone the Respective Repository:**  
+### 1. Install Git (If Not Already Installed)  
+Before cloning the repository, check if Git is installed by running:
 
-   - For the English version:  
-     ```bash
-     git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_EN
-     cd LM_Studio_Voice_Dialogue_EN
-     ```
-   - For the Russian version:  
-     ```bash
-     git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_RU
-     cd LM_Studio_Voice_Dialogue_RU
-     ```
+```bash
+git --version
+```
 
-2. **(Optional) Create a Python Virtual Environment:**  
-   This step is optional but recommended to prevent dependency conflicts if you are working on other projects. If not, you can skip this step.  
+If you see an error or no version information, install Git by opening Command Prompt or PowerShell **as an Administrator** and running:
 
-   Create a virtual environment inside the respective program folder:  
-   - For the English version:  
-     ```bash
-     python -m venv LM_Studio_Voice_Dialogue_EN\env
-     ```
-   - For the Russian version:  
-     ```bash
-     python -m venv LM_Studio_Voice_Dialogue_RU\env
-     ```
+```bash
+winget install --id Git.Git -e --source winget
+```
 
-   Activate the virtual environment for each version:  
-   - For the English program:
-     ```bash
-     LM_Studio_Voice_Dialogue_EN\env\Scripts\activate
-     ```
-   - For the Russian program:
-     ```bash
-     LM_Studio_Voice_Dialogue_RU\env\Scripts\activate
-     ```
+---
 
-3. **Install Dependencies:**  
+### 2. Clone the Repository  
+Clone the version you wish to work with. This will create a project folder where you will install dependencies and perform other tasks.
 
-   - For the English version:  
-     ```bash
-     pip install -r requirements.txt
-     ```
-   - For the Russian version:  
-     ```bash
-     pip install -r requirements.txt
-     ```
+- **For the English Version:**
+  ```bash
+  git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_EN
+  cd LM_Studio_Voice_Dialogue_EN
+  ```
 
-4. **Set Up FFmpeg:**  
-   Follow these steps for both versions:  
-   - **Download FFmpeg:**  
-     - Visit the official FFmpeg website: [https://ffmpeg.org](https://ffmpeg.org) and choose the version suitable for Windows (typically EXE files).  
-   - **Extract the Archive:**  
-     - After downloading (usually a .zip archive), extract it to a convenient location, for example, `C:\ffmpeg`.  
-   - **Add FFmpeg to PATH:**  
-     - Open "Control Panel" → "System" → "Advanced system settings".  
-     - In the "Environment Variables" section, locate the `Path` variable and click "Edit".  
-     - Add the path to the `bin` folder where FFmpeg executables are located (e.g., `C:\ffmpeg\bin`).  
-   - **Verify the Installation:**  
-     - Open Command Prompt (Win + R, type `cmd`, and press Enter).  
-     - Execute `ffmpeg -version` to confirm that FFmpeg is installed correctly.  
+- **For the Russian Version:**
+  ```bash
+  git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_RU
+  cd LM_Studio_Voice_Dialogue_RU
+  ```
 
-5. **Add Spell Check Files (specific to Russian version):**  
-   - Download **ru_RU.aff** and **ru_RU.dic**.  
-   - Place them in the directory specific to the Russian program:  
-     ```
-     LM_Studio_Voice_Dialogue_RU\env\Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
-     ```
+---
+
+### 3. (Optional) Create a Python Virtual Environment  
+Creating an isolated environment is recommended to avoid dependency conflicts with other projects. This step is optional.
+
+1. **Inside the Repository Folder:**  
+   Create a virtual environment named `env` by running:
+   ```bash
+   python -m venv env
+   ```
+2. **Activate the Virtual Environment (Windows):**
+   ```bash
+   env\Scripts\activate
+   ```
+   Your terminal prompt will change to show that you are now operating within the virtual environment.
+
+---
+
+### 4. Install Dependencies  
+With your virtual environment activated—or directly in the repository folder if you skipped the environment step—install the required packages:
+
+```bash
+pip install -r requirements.txt
+```
+
+*Note:* Both the English and Russian versions share the same dependencies.
+
+---
+
+### 5. Set Up FFmpeg  
+FFmpeg is required for audio processing. Follow these steps:
+
+- **Download FFmpeg:**  
+  Visit [https://ffmpeg.org](https://ffmpeg.org) and download the Windows version (usually provided as a ZIP archive).
+
+- **Extract the Archive:**  
+  Extract the contents to a convenient location such as `C:\ffmpeg`.
+
+- **Add FFmpeg to PATH:**  
+  1. Open **Control Panel** → **System** → **Advanced system settings**.
+  2. Click on **Environment Variables**.
+  3. In the "System variables" section, locate and select the `Path` variable, then click **Edit**.
+  4. Add the full path to the `bin` folder within your FFmpeg directory (e.g., `C:\ffmpeg\bin`).
+
+- **Verify the Installation:**  
+  Open a new Command Prompt window and run:
+  ```bash
+  ffmpeg -version
+  ```
+  This should display FFmpeg’s version details if the setup is correct.
+
+---
+
+### 6. Add Spell Check Files (For the Russian Version Only)  
+If you are using the Russian version of the program, perform these additional steps:
+
+1. **Download the Files:**  
+   Obtain the spell check files `ru_RU.aff` and `ru_RU.dic`.
+
+2. **Place the Files:**  
+   Copy both files into the following directory within your project’s virtual environment:
+   ```
+   LM_Studio_Voice_Dialogue_RU\env\Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
+   ```
 
 ---
 
