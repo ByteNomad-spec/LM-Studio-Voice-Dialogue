@@ -83,20 +83,12 @@ winget install --id Git.Git -e --source winget
 
 ---
 
-### 2. Clone the Repository  
-Clone the version you wish to work with. This will create a project folder where you will install dependencies and perform other tasks.
+### 2. Clone the Repository
 
-- **For the English Version:**
-  ```bash
-  git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_EN
-  cd LM_Studio_Voice_Dialogue_EN
-  ```
-
-- **For the Russian Version:**
-  ```bash
-  git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_RU
-  cd LM_Studio_Voice_Dialogue_RU
-  ```
+   ```bash
+   git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git
+   cd LM-Studio-Voice-Dialogue
+   ```
 
 ---
 
