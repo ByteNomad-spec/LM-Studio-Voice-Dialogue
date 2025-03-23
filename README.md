@@ -66,40 +66,51 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 ## 🛠️ Installation
 
-1. **Clone the Repository:**
+1. **(Optional) Create a Python Virtual Environment:**  
+   This step is optional but recommended if you are working on multiple projects to prevent dependency conflicts. If not, you can skip this step.  
+
+   To create a virtual environment, run:  
+   ```bash
+   python -m venv your_env_name
+   ```
+
+   Replace `your_env_name` with any name of your choice. You can freely choose the name, but it's better to stick to alphanumeric characters, underscores (`_`), or hyphens (`-`) to avoid technical issues.
+
+   To activate the environment:  
+   - On Windows:  
+     ```bash
+     your_env_name\Scripts\activate
+     ```
+
+2. **Clone the Repository:**  
 
    ```bash
    git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git
    cd LM-Studio-Voice-Dialogue
    ```
 
-2. **Install Dependencies:**
+3. **Install Dependencies:**  
 
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Set Up FFmpeg:**
+4. **Set Up FFmpeg:**  
+   - **Download FFmpeg:**  
+     - Visit the official FFmpeg website: [https://ffmpeg.org](https://ffmpeg.org) and choose the version suitable for Windows (typically EXE files).  
+   - **Extract the Archive:**  
+     - After downloading (usually a .zip archive), extract it to a convenient location, for example, `C:\ffmpeg`.  
+   - **Add FFmpeg to PATH:**  
+     - Open "Control Panel" → "System" → "Advanced system settings".  
+     - In the "Environment Variables" section, locate the `Path` variable and click "Edit".  
+     - Add the path to the `bin` folder where FFmpeg executables are located (e.g., `C:\ffmpeg\bin`).  
+   - **Verify the Installation:**  
+     - Open Command Prompt (Win + R, type `cmd`, and press Enter).  
+     - Execute `ffmpeg -version` to confirm that FFmpeg is installed correctly.  
 
-   - **Download FFmpeg:**
-     - Visit the official FFmpeg website: [https://ffmpeg.org](https://ffmpeg.org) and choose the version suitable for Windows (typically EXE files).
-
-   - **Extract the Archive:**
-     - After downloading (usually a .zip archive), extract it to a convenient location, for example, `C:\ffmpeg`.
-
-   - **Add FFmpeg to PATH:**
-     - Open "Control Panel" → "System" → "Advanced system settings".
-     - In the "Environment Variables" section, locate the `Path` variable and click "Edit".
-     - Add the path to the `bin` folder where FFmpeg executables are located (e.g., `C:\ffmpeg\bin`).
-
-   - **Verify the Installation:**
-     - Open Command Prompt (Win + R, type `cmd`, and press Enter).
-     - Execute `ffmpeg -version` to confirm that FFmpeg is installed correctly.
-
-4. **Add Spell Check Files (if using Russian):**
-
-   - Download **ru_RU.aff** and **ru_RU.dic**.
-   - Place them in the directory:
+5. **Add Spell Check Files (if using Russian):**  
+   - Download **ru_RU.aff** and **ru_RU.dic**.  
+   - Place them in the directory:  
      ```
      Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
      ```
@@ -143,6 +154,7 @@ This project uses the following libraries and models:
 - **torchaudio** — licensed under the [BSD License](https://opensource.org/licenses/BSD-3-Clause).
 - **FFmpeg** — licensed under [LGPLv2.1](https://www.ffmpeg.org/legal.html) or [GPLv3](https://www.ffmpeg.org/legal.html), depending on the build.
 - **pyenchant** — licensed under the [LGPL License](https://opensource.org/licenses/LGPL-3.0).
+- **PyQt6** — licensed under the [GPL v3 License](https://www.gnu.org/licenses/gpl-3.0.html) or a commercial license. 
 
 Please ensure you comply with the terms of these licenses before using the project.
 ```
