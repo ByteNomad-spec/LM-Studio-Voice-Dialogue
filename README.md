@@ -67,35 +67,56 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 ## 🛠️ Installation
 
 1. **(Optional) Create a Python Virtual Environment:**  
-   This step is optional but recommended if you are working on multiple projects to prevent dependency conflicts. If not, you can skip this step.  
+   This step is optional but recommended to prevent dependency conflicts if you are working on other projects. If not, you can skip this step.  
 
-   To create a virtual environment, run:  
-   ```bash
-   python -m venv env
-   ```
-
-   Replace `env` with any name of your choice. You can freely choose the name, but it's better to stick to alphanumeric characters, underscores (`_`), or hyphens (`-`) to avoid technical issues.
-
-   To activate the environment:  
-   - On Windows:  
+   Create a virtual environment inside the respective program folder:  
+   - For the English version:  
      ```bash
-     env\Scripts\activate
+     python -m venv LM_Studio_Voice_Dialogue_EN\env
+     ```
+   - For the Russian version:  
+     ```bash
+     python -m venv LM_Studio_Voice_Dialogue_RU\env
      ```
 
-2. **Clone the Repository:**  
+   Activate the virtual environment for each version:  
+   - For the English program:
+     ```bash
+     LM_Studio_Voice_Dialogue_EN\env\Scripts\activate
+     ```
+   - For the Russian program:
+     ```bash
+     LM_Studio_Voice_Dialogue_RU\env\Scripts\activate
+     ```
 
-   ```bash
-   git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git
-   cd LM-Studio-Voice-Dialogue
-   ```
+   This ensures that the virtual environment is tightly coupled to each program's folder.
+
+2. **Clone the Respective Repository:**  
+
+   - For the English version:  
+     ```bash
+     git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_EN
+     cd LM_Studio_Voice_Dialogue_EN
+     ```
+   - For the Russian version:  
+     ```bash
+     git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_RU
+     cd LM_Studio_Voice_Dialogue_RU
+     ```
 
 3. **Install Dependencies:**  
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+   - For the English version:  
+     ```bash
+     pip install -r requirements.txt
+     ```
+   - For the Russian version:  
+     ```bash
+     pip install -r requirements.txt
+     ```
 
 4. **Set Up FFmpeg:**  
+   Follow these steps for both versions:  
    - **Download FFmpeg:**  
      - Visit the official FFmpeg website: [https://ffmpeg.org](https://ffmpeg.org) and choose the version suitable for Windows (typically EXE files).  
    - **Extract the Archive:**  
@@ -108,11 +129,11 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
      - Open Command Prompt (Win + R, type `cmd`, and press Enter).  
      - Execute `ffmpeg -version` to confirm that FFmpeg is installed correctly.  
 
-5. **Add Spell Check Files (if using Russian):**  
+5. **Add Spell Check Files (specific to Russian version):**  
    - Download **ru_RU.aff** and **ru_RU.dic**.  
-   - Place them in the directory:  
+   - Place them in the directory specific to the Russian program:  
      ```
-     Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
+     LM_Studio_Voice_Dialogue_RU\env\Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
      ```
 
 ---
