@@ -66,7 +66,20 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 ## 🛠️ Installation
 
-1. **(Optional) Create a Python Virtual Environment:**  
+1. **Clone the Respective Repository:**  
+
+   - For the English version:  
+     ```bash
+     git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_EN
+     cd LM_Studio_Voice_Dialogue_EN
+     ```
+   - For the Russian version:  
+     ```bash
+     git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_RU
+     cd LM_Studio_Voice_Dialogue_RU
+     ```
+
+2. **(Optional) Create a Python Virtual Environment:**  
    This step is optional but recommended to prevent dependency conflicts if you are working on other projects. If not, you can skip this step.  
 
    Create a virtual environment inside the respective program folder:  
@@ -87,21 +100,6 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
    - For the Russian program:
      ```bash
      LM_Studio_Voice_Dialogue_RU\env\Scripts\activate
-     ```
-
-   This ensures that the virtual environment is tightly coupled to each program's folder.
-
-2. **Clone the Respective Repository:**  
-
-   - For the English version:  
-     ```bash
-     git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_EN
-     cd LM_Studio_Voice_Dialogue_EN
-     ```
-   - For the Russian version:  
-     ```bash
-     git clone https://github.com/ByteNomad-spec/LM-Studio-Voice-Dialogue.git LM_Studio_Voice_Dialogue_RU
-     cd LM_Studio_Voice_Dialogue_RU
      ```
 
 3. **Install Dependencies:**  
