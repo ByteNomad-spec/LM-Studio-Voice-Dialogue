@@ -129,10 +129,10 @@ FFmpeg is required for audio processing. Follow these steps:
   Extract the contents to a convenient location such as `C:\ffmpeg`.
 
 - **Add FFmpeg to PATH:**  
-  1. Open **Control Panel** → **System** → **Advanced system settings**.
-  2. Click on **Environment Variables**.
-  3. In the "System variables" section, locate and select the `Path` variable, then click **Edit**.
-  4. Add the full path to the `bin` folder within your FFmpeg directory (e.g., `C:\ffmpeg\bin`).
+1. Open **Control Panel** → **System** → **Advanced system settings**.
+2. Click on **Environment Variables**.
+3. In the "System variables" section, locate and select the `Path` variable, then click **Edit**.
+4. Add the full path to the `bin` folder within your FFmpeg directory (e.g., `C:\ffmpeg\bin`).
 
 - **Verify the Installation:**  
   Open a new Command Prompt window and run:
