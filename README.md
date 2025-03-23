@@ -67,7 +67,9 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 ## 🛠️ Installation
 
 ### 1. Install Git (If Not Already Installed)  
-Before cloning the repository, check if Git is installed by running:
+Before cloning the repository, press the `Win + R` keys simultaneously.  
+In the run dialog that appears, type `cmd` and press **Enter**, 
+check if Git is installed by running:
 
 ```bash
 git --version
