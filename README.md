@@ -61,7 +61,8 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
   ```
   Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
   ```
-
+  https://drive.google.com/file/d/1Nuz2vUa4bg_A58X8HME6B2aRn1YA9ZCB/view?usp=sharing
+  ```
 ---
 
 ### 🛠️ Installation
