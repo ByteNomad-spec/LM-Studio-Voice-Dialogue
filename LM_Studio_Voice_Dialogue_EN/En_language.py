@@ -451,15 +451,16 @@ class VoiceAssistantBackend:
 
     def generate_summary(self) -> None:
         summary_prompt = (
-            "Based on the data from our messages, create a concise structured summary of all the key information about me."
-            "Follow the template below:"
-            "1. About me: name, age, place of residence, profession, interests, hobbies, achievements, goals, key personality traits."
-            "2. Family: family members, close relatives, names, ages, place of residence, important details, events, and memories."
-            "3. Friends, close ones, important acquaintances: names, ages, place of residence, important events, and key details."
-            "4. Emotions: significant emotions and feelings related to important events."
-            "5. Conversations: main topics of discussion, important moments and details, general conclusions."
-            "6. Instructions and preferences: special instructions, preferences, favorite things."
-            "7. Values and beliefs: important principles, views, and beliefs."
+            "Based on the data from our messages, create a concise structured summary of all the key information about me. "
+            "Follow the template below: "
+            "1. About me: name, age, place of residence, profession, interests, hobbies, achievements, goals, key personality traits. "
+            "2. Family: family members, close relatives, names, ages, place of residence, important details, events, and memories. "
+            "3. Friends, close ones, important acquaintances: names, ages, place of residence, important events, and key details. "
+            "4. Emotions: significant emotions and feelings related to important events. "
+            "5. Conversations: main topics of discussion, important moments and details, general conclusions. "
+            "6. Instructions and preferences: special instructions, preferences, favorite things. "
+            "7. Values and beliefs: important principles, views, and beliefs. "
+            "8. Special Information: Enter specific details here that do not fit within any templates. "
             "Important: this summary is intended for your long-term memory and should not be discussed during our communication."
         )
         self.conversation_history.append({"role": "user", "content": summary_prompt})
