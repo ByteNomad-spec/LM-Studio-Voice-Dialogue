@@ -65,11 +65,9 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 ### 🛠️ Installation
 
-- **Easy installation for beginners**
-  Download the archive from the link, unzip it and follow the instructions in it.
-  (https://drive.google.com/file/d/1Nuz2vUa4bg_A58X8HME6B2aRn1YA9ZCB/view?usp=sharing)
-  ```
-
+- **Simple Installation for Beginners**  
+  Download the archive from the provided link, unzip it, and follow the instructions included inside.  
+  [Download here](https://drive.google.com/file/d/1Nuz2vUa4bg_A58X8HME6B2aRn1YA9ZCB/view?usp=sharing)
 
 #### 1. Install Python 3.10.0 and pip  
 If Python is not installed on your system, follow these steps:
