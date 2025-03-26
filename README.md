@@ -52,7 +52,7 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 ## ⚙️ Requirements
 
-- **Minimum system requirements: ssd space 10gb, ram 16gb, vram 6gb.
+- Minimum system requirements: ssd space 10gb, ram 16gb, vram 6gb.
 - **Python 3.10.0**
 - **FFmpeg** (required for audio processing—ensure it is installed and added to your PATH)
 - **PyAudio, pygame, whisper, Coqui TTS, PyQt6, openai, torch, pyenchant** and other dependencies listed in `requirements.txt`.
