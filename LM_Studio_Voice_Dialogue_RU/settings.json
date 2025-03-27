@@ -2,7 +2,7 @@
   "text_size": 14,
   "tts_model": "tts_models/multilingual/multi-dataset/xtts_v2",
   "whisper_model": "large-v3-turbo",
-  "summary_interval": 7,
+  "summary_interval": 6,
   "colors": {
     "text_input_bg": "#0d1318",
     "text_input_text": "#cbcbcb",

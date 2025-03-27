@@ -44,7 +44,7 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
   - Changes are saved to a JSON file; some (e.g., font size) take effect immediately, while others require a restart.
 
 ### 🏗️ Long-Term Memory Logic
-- The entire process runs cyclically and covertly, without interrupting the dialogue. After a certain number of messages (defined by `summary_interval`, which can be configured in the settings — for example, for 8192 tokens, I recommend 7, to count the number of tokens would be more reliable, but I have not yet figured out how to implement it), the **generate_summary** function is invoked, passing instructions to the AI to create a brief, structured summary of all the key information using a template and a prioritized list.
+- The entire process runs cyclically and covertly, without interrupting the dialogue. After a certain number of messages from the AI (defined by `summary_interval`, which can be configured in the settings — for example, for 8192 tokens, I recommend 6, to count the number of tokens would be more reliable, but I have not yet figured out how to implement it), the **generate_summary** function is invoked, passing instructions to the AI to create a brief, structured summary of all the key information using a template and a prioritized list.
 - Since the summary of key information is generated cyclically, all important data remains within the AI's contextual window. This is achieved because, when creating each new summary, the AI uses data from the previous one, which, in turn, was formed based on information from an earlier summary. This process repeats infinitely.
 - This mechanism helps the AI retain key information even with a limited context.
 
@@ -68,7 +68,7 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 **Simple Installation for Beginners:**  
   Download the archive from the provided link, unzip it, and follow the instructions included inside.  
-  [Download here](https://drive.google.com/file/d/1H4DmnyXF8t_3XnsF8eZj3mU9RF5ryACx/view?usp=sharing)
+  [Download here](https://drive.google.com/file/d/1lwnd54yVP8Zf6tECP92AyuN6v4lO4Mb_/view?usp=sharing)
 
 **Standard Installation:**
   1. Install Python 3.10.0 and pip  
