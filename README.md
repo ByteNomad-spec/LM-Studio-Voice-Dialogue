@@ -66,7 +66,7 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 ### 🛠️ Installation
 
-**Simple Installation for Beginners:**  
+**Easy installation (recommended):**  
   Download the archive from the provided link, unzip it, and follow the instructions included inside.  
   [Download here](https://drive.google.com/file/d/1cDpFCCaKskoiTfT00bURgZV25dlhfuuU/view?usp=sharing)
 
