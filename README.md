@@ -183,7 +183,7 @@ For the Russian version of the application, download the `ru_RU.aff` and `ru_RU.
 
 ## ▶️ Usage
 
-After launching LM Studio, enabling the local server and loading the desired AI model:
+Run the application after running the AI ​​model in Lm studio:
 
    ```bash
    python En_language.py  # for English
