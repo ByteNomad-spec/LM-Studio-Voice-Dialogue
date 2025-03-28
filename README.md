@@ -50,10 +50,10 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 
 ---
 
-## ⚙️ Requirements
+## ⚙️ Requirements and recommendations
 
 - Minimum system requirements: ssd space 10gb, ram 16gb, vram 6gb.
-- Run the ai model in Lm studio first and then the app.
+- Run the AI ​​model in Lm Studio first and then the application.
 - At the moment, the application does not support reasoning models ai, as well as models with the function of image analysis (you can set the "Prompt Template" alpaca, but problems may arise).
 - **Python 3.10.0**.
 - **FFmpeg** (required for audio processing—ensure it is installed and added to your PATH).
