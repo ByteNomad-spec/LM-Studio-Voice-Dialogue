@@ -59,11 +59,6 @@ LM-Studio-Voice-Dialogue is an application that enables voice interaction with a
 - **FFmpeg** (required for audio processing—ensure it is installed and added to your PATH).
 - **PyAudio, pygame, whisper, Coqui TTS, PyQt6, openai, torch, pyenchant** and other dependencies listed in `requirements.txt`.
 
-### 🔹 Additional
-- For Russian spell checking support, add the **ru_RU.aff** and **ru_RU.dic** files to:
-  ```
-  Lib\site-packages\enchant\data\mingw64\share\enchant\hunspell
-  ```
 ---
 
 ### 🛠️ Installation
