@@ -1,5 +1,8 @@
-import sys
 import os
+os.environ["TTS_NO_CHECKS"] = "1"
+os.environ["DISABLE_UPDATE_CHECKS"] = "1"
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
+import sys
 import json
 import time
 import wave
