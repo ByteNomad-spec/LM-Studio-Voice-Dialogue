@@ -454,7 +454,8 @@ class VoiceAssistantBackend:
 
     def generate_summary(self) -> None:
         summary_prompt = (
-            "Analyze all the information from our messages and create a structured summary of all the information about me. "
+            "Based on all the information accumulated during our communication, "
+            "write a detailed, logically structured resume about me (User). "
             "Follow the template below: "
             "1. About me: name, age, place of residence, profession, interests, hobbies, achievements, goals, key personality traits. "
             "2. Family and relatives: status, names, age, place of residence, important details, events and memories. "
